@@ -1,0 +1,97 @@
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import Control from './CargaPatentesController';
+import CargaPatentesFetch from './CargaPatentesFetch';
+
+const CargaPatentes = () => {
+
+    const navigation = useNavigation();
+
+    const data = { numero : 'IHP555' };
+
+    const handleButtonPress = () => {
+
+        fetch('http://if012app.fi.mdn.unp.edu.ar:28001/patentes/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success:', data);
+        });
+    }
+
+    return(
+        <SafeAreaView>
+            <View style={styles.title}>
+                <Text style={styles.title}>
+                Carga manual de patentes
+                </Text>
+                <SafeAreaView>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Número de patente"
+                    />
+                </SafeAreaView>
+            </View>
+            <View
+                style={{
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+            <Control 
+                handleButtonPress={handleButtonPress}
+            />
+            </View>
+        </SafeAreaView>
+    );
+
+}
+
+const styles = StyleSheet.create({
+
+    title: {
+        fontSize: 30,
+        color: '#000',
+        padding: 12,
+        marginTop: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    input: {
+        height: 45,
+        width: 250,
+        marginTop: 120,
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 20,
+        backgroundColor: '#fff'
+    },
+
+    button: {
+        backgroundColor: 'orange',
+        height: 80,
+        width: 80,
+        marginTop: 180,
+        borderWidth: 1,
+        padding: 10,
+        borderRadius: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    buttonText: {
+        color: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
+
+});
+
+export default CargaPatentes;
