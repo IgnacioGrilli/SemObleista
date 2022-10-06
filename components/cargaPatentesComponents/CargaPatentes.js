@@ -1,23 +1,40 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
 import Control from './CargaPatentesController';
 import CargaPatentesFetch from './CargaPatentesFetch';
 
 const CargaPatentes = () => {
 
-    const navigation = useNavigation();
+    moment().format();
 
-    const data = { numero : 'IHP555' };
+    const navigation = useNavigation();
 
     const handleButtonPress = () => {
 
-        fetch('http://if012app.fi.mdn.unp.edu.ar:28001/patentes/new', {
+        var obleista = '2';
+
+        var numero = 'IHP555';
+
+        var date = moment()
+        .format('YYYY-MM-DD');
+
+        var hour = moment()
+        .utcOffset('+00:00')
+        .format('HH:mm');
+
+        fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({
+                obleistaid: obleista,
+                patenteid: numero,
+                fecha: date,
+                hora: hour
+            }),
         })
         .then((response) => response.json())
         .then((data) => {
