@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Button,
 } from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
@@ -16,7 +17,7 @@ function openDatabase() {
     return {
       transaction: () => {
         return {
-          executeSql: () => {},
+          executeSql: () => { },
         };
       },
     };
@@ -28,7 +29,7 @@ function openDatabase() {
 
 const db = openDatabase();
 
-function Items({ done: doneHeading, onPressItem }) {
+/* function Items({ done: doneHeading, onPressItem }) {
   const [items, setItems] = useState(null);
 
   useEffect(() => {
@@ -66,43 +67,97 @@ function Items({ done: doneHeading, onPressItem }) {
       ))}
     </View>
   );
-}
+} */
 
-export default function CargaPatentesSqlite() {
-  const [text, setText] = useState(null);
-  const [forceUpdate, forceUpdateId] = useForceUpdate();
 
+function Items2({ done: doneHeading, onPressItem }) {
+  const [patentes, setPatentes] = useState(null);
+
+  //diferencia
   useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
-       "create table if not exists items (id integer primary key not null, done int, value text);"
-        //"CREATE TABLE if not exists registro_patentes_diarios (id bigserial NOT NULL,fecha date NULL,hora time NULL,patenteid varchar(255) NULL, obleistaid int4 NULL)"
-
+        `select * from registro_patentes_diarios`,
+        [],
+        (_, { rows: { _array } }) => setPatentes(_array)
       );
     });
   }, []);
 
-  const add = (text) => {
-    // is text empty?
-    if (text === null || text === "") {
+  const heading = doneHeading ? "Completed" : "Todo";
+
+  if (patentes === null || patentes.length === 0) {
+    return null;
+  }
+
+  return (
+    <View style={styles.sectionContainer}>
+      <Text style={styles.sectionHeading}>{heading}</Text>
+      {patentes.map(({ patente, done, value }) => (
+        <TouchableOpacity
+          key={patente}
+          onPress={() => onPressItem && onPressItem(patente)}
+          style={{
+            backgroundColor: done ? "#1c9963" : "#fff",
+            borderColor: "#000",
+            borderWidth: 1,
+            padding: 8,
+          }}
+        >
+          <Text style={{ color: done ? "#fff" : "#000" }}>{value}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+}
+
+
+export default function CargaPatentesSqlite() {
+  const [patentetext, setText] = useState(null);
+  const [forceUpdate, forceUpdateId] = useForceUpdate();
+
+
+
+  useEffect(() => {
+    db.transaction((tx) => {
+      //tx.executeSql('DROP TABLE IF EXISTS registro_patentes_diarios');
+      //tx.executeSql(
+      //"create table if not exists items (id integer primary key not null, done int, value text);"
+      /* "CREATE TABLE if not exists registro_patentes_diarios (id integer primary key not null," +
+      "patente text not null, fecha text DEFAULT CURRENT_TIMESTAMP )"  */
+
+      tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (patente text primary key not null);");
+
+      //    );
+      //tx.executeSql("insert into registro_patentes_diarios (patente) values (?)",["hola"]);
+      console.log(JSON.stringify(patentetext));
+
+    });
+  }, []);
+
+  const add2 = (patentetext) => {
+    // is patentetext empty?
+    if (patentetext === null || patentetext === "") {
       return false;
     }
 
+    console.log(JSON.stringify(patentetext))
+
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into items (done, value) values (0, ?)", [text]);
-        tx.executeSql("select * from items", [], (_, { rows }) =>
+        tx.executeSql("insert into registro_patentes_diarios (patente) values (?)", [patentetext]);
+        tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
       },
       null,
-      forceUpdate
+      null
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>SQLite Example</Text>
+      <Text style={styles.heading}>Registro de Patentes Diario</Text>
 
       {Platform.OS === "web" ? (
         <View
@@ -116,46 +171,94 @@ export default function CargaPatentesSqlite() {
         <>
           <View style={styles.flexRow}>
             <TextInput
-              onChangeText={(text) => setText(text)}
+              onChangeText={(patentetext) => setText(patentetext)}
               onSubmitEditing={() => {
-                add(text);
+               // add2(patentetext);
                 setText(null);
               }}
-              placeholder="what do you need to do?"
+              placeholder="ingrese la patente que desea registrar"
               style={styles.input}
-              value={text}
+              value={patentetext}
             />
+
           </View>
           <ScrollView style={styles.listArea}>
-            <Items
-              key={`forceupdate-todo-${forceUpdateId}`}
+            {/*   <Items2
+              key={patentetext}
               done={false}
               onPressItem={(id) =>
                 db.transaction(
                   (tx) => {
-                    tx.executeSql(`update items set done = 1 where id = ?;`, [
+                    tx.executeSql(`update registro_patentes_diarios set fecha = "hoy" where id = ?;`, [
                       id,
                     ]);
                   },
                   null,
-                  forceUpdate
+                  null
                 )
               }
             />
-            <Items
+            <Items2
               done
-              key={`forceupdate-done-${forceUpdateId}`}
+              key={patentetext}
               onPressItem={(id) =>
                 db.transaction(
                   (tx) => {
-                    tx.executeSql(`delete from items where id = ?;`, [id]);
+                    tx.executeSql(`delete from registro_patentes_diarios where id = ?;`, [id]);
                   },
                   null,
-                  forceUpdate
+                  null
                 )
               }
-            />
+            /> */}
           </ScrollView>
+
+          <View style={styles.botton}>
+            <Button
+              onPress={(tx) => db.transaction(
+                (tx) => {
+                  tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) =>
+                    console.log(JSON.stringify(rows))
+                  );
+                },
+                null,
+                null
+              )}
+              title="listar"
+              color="blue"
+            />
+
+
+          </View>
+
+          <View style={styles.botton}>
+            <Button
+              onPress={db.transaction(
+                (tx) => {
+                  tx.executeSql("insert into registro_patentes_diarios (patente) values (?)", [patentetext]);
+                },
+                null,
+                null
+              )}
+              title="guardar"
+              color="orange"
+            />
+          </View>
+
+          <View style={styles.botton}>
+            <Button
+              onPress={db.transaction(
+                (tx) => {
+                  tx.executeSql("delete from registro_patentes_diarios");
+                },
+                null,
+                null
+              )}
+              title="borrar"
+              color="green"
+            />
+          </View>
+
         </>
       )}
     </View>
@@ -177,6 +280,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  botton: {
+    borderColor: "#4630eb",
+    borderRadius: 10,
+    borderWidth: 2,
+    borderBottomWidth: 5,
+    fontSize: 8,
+    fontWeight: "bold",
+    textAlign: "center",
+    height: 50,
+    margin: 5,
+    padding: 4
   },
   flexRow: {
     flexDirection: "row",
@@ -204,116 +319,3 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
-
-
-/* import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import * as SQLite from 'expo-sqlite'
-import { useNavigation } from '@react-navigation/native';
-
-
-
-const db = SQLite.openDatabase('db.testDb') // returns Database object
-
-class CargaItem extends React.Component {
-    constructor(props) {
-      super(props)
-      this.state = {
-        data: null
-      }
-      // Check if the items table exists if not create it
-      db.transaction(tx => {
-        tx.executeSql(
-          'CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT, count INT)'
-        )
-      })
-      this.fetchData() // ignore it for now
-    }
-    render() {
-      return (
-          <View style={Style.main}>
-          <Text>Add Random Name with Counts</Text>
-          <TouchableOpacity onPress={this.newItem} style={Style.green}>
-            <Text style={Style.white}>Add New Item</Text>
-          </TouchableOpacity>
-  
-          <ScrollView style={Style.widthfull}>
-          {
-              this.state.data && this.state.data.map(data =>
-              (
-                  <View key={data.id} style={Style.list}>
-                  <Text >{data.text} - {data.count}</Text>
-                  <TouchableOpacity onPress={() => this.increment(data.id)}>
-                      <Text style={Style.boldGreen}> + </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.delete(data.id)}>
-                      <Text style={Style.boldRed}> DEL </Text>
-                  </TouchableOpacity>
-                  </View>
-              )
-          )}
-          </ScrollView>
-        </View >
-      )
-    }
-  }
-  export default CargaItem
-  // Styles are removed purpose-fully 
-
-
-  fetchData = () => {
-    db.transaction(tx => {
-      // sending 4 arguments in executeSql
-      tx.executeSql('SELECT * FROM items', null, // passing sql query and parameters:null
-        // success callback which sends two things Transaction object and ResultSet Object
-        (txObj, { rows: { _array } }) => this.setState({ data: _array }),
-        // failure callback which sends two things Transaction object and Error
-        (txObj, error) => console.log('Error ', error)
-        ) // end executeSQL
-    }) // end transaction
-  }
-
-  // event handler for new item creation
- newItem = () => {
-    db.transaction(tx => {
-      tx.executeSql('INSERT INTO items (text, count) values (?, ?)', ['gibberish', 0],
-        (txObj, resultSet) => this.setState({ data: this.state.data.concat(
-            { id: resultSet.insertId, text: 'gibberish', count: 0 }) }),
-        (txObj, error) => console.log('Error', error))
-    })
-  }
-
-  increment = (id) => {
-    db.transaction(tx => {
-      tx.executeSql('UPDATE items SET count = count + 1 WHERE id = ?', [id],
-        (txObj, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            let newList = this.state.data.map(data => {
-              if (data.id === id)
-                return { ...data, count: data.count + 1 }
-              else
-                return data
-            })
-            this.setState({ data: newList })
-          }
-        })
-    })
-  }
-
-  delete = (id) => {
-    db.transaction(tx => {
-      tx.executeSql('DELETE FROM items WHERE id = ? ', [id],
-        (txObj, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            let newList = this.state.data.filter(data => {
-              if (data.id === id)
-                return false
-              else
-                return true
-            })
-            this.setState({ data: newList })
-          }
-        })
-    })
-  } */
-
