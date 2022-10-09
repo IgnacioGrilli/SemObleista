@@ -1,15 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import * as SQLite from 'expo-sqlite';
 import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
 import Control from './CargaPatentesController';
 import CargaPatentesFetch from './CargaPatentesFetch';
 
-const CargaPatentes = () => {
+/*
+    function openDatabase() {
+        if (Platform.OS === "web") {
+            return {
+                transaction: () => {
+                    return {
+                        executeSql: () => {},
+                    };
+                },
+            };
+        }
 
-    moment().format();
+        const db = SQLite.openDatabase("db.db");
+        return db;
+    }
 
-    const navigation = useNavigation();
+    const db = openDatabase();
+
+    function patentes({}) {
+        const [patentes, setPatentes] = useState(null);
+
+        useEffect(() => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'select * from patentes',
+                    [],
+                );
+            });
+        }, []);
+    }
+
+    function cargaPatente() {
+
+        useEffect(() => {
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'create table if not exists registroPatentes( ' +
+                    'id INTEGER PRIMARY KEY NOT NULL, ' +
+                    'obleista INTEGER NOT NULL, ' +
+                    'patente TEXT NOT NULL, ' +
+                    'fecha TEXT NOT NULL, ' +
+                    'hora TEXT NOT NULL);'
+                );
+            });
+        }, []);
+
+        const add = (obleista, numero, fecha, hora) => {
+            if (text === null || text === "") {
+                return false;
+            }
+
+            db.transaction((tx) => {
+                tx.executeSql(
+                    'INSERT INTO patentes ' +
+                    '(obleista, patente, fecha, hora) ' + 
+                    'VALUES ' +
+                    '(?, ?, ?, ?)',
+                    [obleista, numero, fecha, hora]
+                );
+            });
+        };
+    }
 
     const handleButtonPress = () => {
 
@@ -41,29 +99,48 @@ const CargaPatentes = () => {
             console.log('Success:', data);
         });
     }
+*/
+
+
+const CargaPatentes = () => {
+
+    const navigation = useNavigation();
+
+    const [patente, setPatente] = useState("");
+
+    const validateNumero = (patente) => {
+        var reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/
+        return reg.test(patente);
+    }
+
+    const handleSubmit = () => {
+        if (!validateNumero(patente)) {
+            console.log("flashaste pa");
+        } else {
+            console.log(patente);
+        }
+    }
 
     return(
         <SafeAreaView>
             <View style={styles.title}>
                 <Text style={styles.title}>
-                Carga manual de patentes
+                Control diario de patentes
                 </Text>
                 <SafeAreaView>
                     <TextInput
                         style={styles.input}
                         placeholder="Número de patente"
+                        onChangeText={(text) => setPatente(text)}
+                        onSubmitEditing={() => {
+                            handleSubmit(patente);
+                            setPatente("");
+                        }}
+                        autoCapitalize="characters"
+                        maxLength={7}
+                        value={patente}
                     />
                 </SafeAreaView>
-            </View>
-            <View
-                style={{
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}
-            >
-            <Control 
-                handleButtonPress={handleButtonPress}
-            />
             </View>
         </SafeAreaView>
     );

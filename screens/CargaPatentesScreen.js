@@ -19,7 +19,8 @@ const CargaPatentesScreen = () => {
 const styles = StyleSheet.create({
 
     screen: {
-        backgroundColor: '#ddd'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
 });
