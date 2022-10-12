@@ -6,74 +6,9 @@ import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpaci
 import Control from './CargaPatentesController';
 import CargaPatentesFetch from './CargaPatentesFetch';
 
-/*
-    function openDatabase() {
-        if (Platform.OS === "web") {
-            return {
-                transaction: () => {
-                    return {
-                        executeSql: () => {},
-                    };
-                },
-            };
-        }
+const CargaPatentes = () => {
 
-        const db = SQLite.openDatabase("db.db");
-        return db;
-    }
-
-    const db = openDatabase();
-
-    function patentes({}) {
-        const [patentes, setPatentes] = useState(null);
-
-        useEffect(() => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'select * from patentes',
-                    [],
-                );
-            });
-        }, []);
-    }
-
-    function cargaPatente() {
-
-        useEffect(() => {
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'create table if not exists registroPatentes( ' +
-                    'id INTEGER PRIMARY KEY NOT NULL, ' +
-                    'obleista INTEGER NOT NULL, ' +
-                    'patente TEXT NOT NULL, ' +
-                    'fecha TEXT NOT NULL, ' +
-                    'hora TEXT NOT NULL);'
-                );
-            });
-        }, []);
-
-        const add = (obleista, numero, fecha, hora) => {
-            if (text === null || text === "") {
-                return false;
-            }
-
-            db.transaction((tx) => {
-                tx.executeSql(
-                    'INSERT INTO patentes ' +
-                    '(obleista, patente, fecha, hora) ' + 
-                    'VALUES ' +
-                    '(?, ?, ?, ?)',
-                    [obleista, numero, fecha, hora]
-                );
-            });
-        };
-    }
-
-    const handleButtonPress = () => {
-
-        var obleista = '2';
-
-        var numero = 'IHP555';
+    const postRegistroOnPress = (patente) => {
 
         var date = moment()
         .format('YYYY-MM-DD');
@@ -87,11 +22,15 @@ import CargaPatentesFetch from './CargaPatentesFetch';
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                obleistaid: obleista,
-                patenteid: numero,
-                fecha: date,
-                hora: hour
+            body: JSON.stringify({ 
+                "usuarioObleista": {
+                    "id": 2
+                },
+                "patente": {
+                    "numero": patente
+                },
+                "fecha": date,
+                "hora": hour      
             }),
         })
         .then((response) => response.json())
@@ -99,10 +38,6 @@ import CargaPatentesFetch from './CargaPatentesFetch';
             console.log('Success:', data);
         });
     }
-*/
-
-
-const CargaPatentes = () => {
 
     const navigation = useNavigation();
 
@@ -118,6 +53,7 @@ const CargaPatentes = () => {
             console.log("flashaste pa");
         } else {
             console.log(patente);
+            postRegistroOnPress(patente);
         }
     }
 
