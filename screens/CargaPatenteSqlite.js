@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Button,
+  FlatList
 } from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
@@ -30,43 +31,31 @@ function openDatabase() {
 
 const db = openDatabase();
 
-function Items2({ done: doneHeading, onPressItem }) {
+function PatenteLista({}) {
   const [patentes, setPatentes] = useState(null);
 
-  //diferencia
+  
   useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
         `select * from registro_patentes_diarios`,
         [],
-        (_, { rows: { patentes_arreglo } }) => setPatentes(patentes_arreglo)
+        (_, { rows: { _array } }) => setPatentes(_array)
       );
     });
-  }, []);
-
-  const heading = doneHeading ? "Completed" : "Todo";
+  }, patentes);
 
   if (patentes === null || patentes.length === 0) {
     return null;
   }
-
   return (
     <View style={styles.sectionContainer}>
-      <Text style={styles.sectionHeading}>{heading}</Text>
-      {patentes.map(({ patente, done, value }) => (
-        <TouchableOpacity
-          key={patente}
-          onPress={() => onPressItem && onPressItem(patente)}
-          style={{
-            backgroundColor: done ? "#1c9963" : "#fff",
-            borderColor: "#000",
-            borderWidth: 1,
-            padding: 8,
-          }}
-        >
-          <Text style={{ color: done ? "#fff" : "#000" }}>{value}</Text>
-        </TouchableOpacity>
-      ))}
+      <FlatList
+        data={patentes}
+        keyExtractor={({ id }, index) => id}
+        renderItem={({ item }) => (
+          <Text>id : {item.id}   patente: {item.patente}  hora:  {item.fecha}</Text>)}
+      />
     </View>
   );
 }
@@ -94,6 +83,43 @@ export default function CargaPatentesSqlite() {
 
     });
   }, []);
+
+
+  const enviarDatos = () => {
+
+
+    const [patentes, setPatentes] = useState(null);
+
+  
+    useEffect(() => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `select * from registro_patentes_diarios`,
+          [],
+          (_, { rows: { _array } }) => setPatentes(_array)
+        );
+      });
+    }, patentes);
+
+
+    const data = { numero : 'IHP555' };
+
+
+    fetch('http://if012app.fi.mdn.unp.edu.ar:28001/patentes/new', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      console.log('Success:', data);
+  });
+
+  
+ 
+  };
 
   const add2 = (patentetext) => {
 
@@ -168,9 +194,12 @@ export default function CargaPatentesSqlite() {
             />
 
           </View>
-          <ScrollView style={styles.listArea}>
-            {/* agregar las patentes cargadas */}
-          </ScrollView>
+
+          <View style={styles.sectionContainer}>
+              <PatenteLista/>
+            
+          </View>
+
 
           <View style={styles.botton}>
             <Button
@@ -186,11 +215,12 @@ export default function CargaPatentesSqlite() {
               title="listar"
               color="blue"
             />
+           
           </View>
 
           <View style={styles.botton}>
             <Button
-              onPress={()=> add2(patentetext)} 
+              onPress={() => add2(patentetext)}
               title="guardar"
               color="orange"
             />
@@ -207,6 +237,14 @@ export default function CargaPatentesSqlite() {
               )}
               title="borrar"
               color="green"
+            />
+          </View>
+
+          <View style={styles.botton}>
+            <Button
+              onPress={() => enviarDatos()}
+              title="enviar"
+              color="orange"
             />
           </View>
 

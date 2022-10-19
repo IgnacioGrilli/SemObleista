@@ -1,4 +1,4 @@
-'use strict';
+/* 'use strict';
 
 var React = require('react');
 var ReactNative = require('react-native');
@@ -108,3 +108,4 @@ var styles = StyleSheet.create({
         paddingVertical: 150,
     },
 });
+ */

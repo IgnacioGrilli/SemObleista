@@ -1,4 +1,4 @@
- import { useState, useEffect } from "react";
+/*  import { useState, useEffect } from "react";
 import {
   Platform,
   ScrollView,
@@ -234,3 +234,4 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 }); 
+ */
