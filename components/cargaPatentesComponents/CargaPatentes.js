@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import * as SQLite from 'expo-sqlite';
 import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
 import Control from './CargaPatentesController';
 import CargaPatentesFetch from './CargaPatentesFetch';
 
 const CargaPatentes = () => {
 
-    const postRegistroOnPress = (patente) => {
+    moment().format();
+
+    const navigation = useNavigation();
+
+    const handleButtonPress = () => {
+
+        var obleista = '2';
+
+        var numero = 'IHP555';
 
         var date = moment()
         .format('YYYY-MM-DD');
@@ -22,15 +29,11 @@ const CargaPatentes = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ 
-                "usuarioObleista": {
-                    "id": 2
-                },
-                "patente": {
-                    "numero": patente
-                },
-                "fecha": date,
-                "hora": hour      
+            body: JSON.stringify({
+                obleistaid: obleista,
+                patenteid: numero,
+                fecha: date,
+                hora: hour
             }),
         })
         .then((response) => response.json())

@@ -5,7 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import HomeScreen from "./screens/HomeScreen";
 import CargaPatentesScreen from "./screens/CargaPatentesScreen";
-import PagoPatenteScreen from "./screens/PagoPatenteScreen";
+import CargaPatentesSqlite from './screens/CargaPatenteSqlite';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -56,11 +57,13 @@ function MyTabs() {
                     )
                 }}
             />
+
             <Tab.Screen 
-                name="Pago en efectivo" 
-                component={PagoPatenteScreen} 
+                name="cargaItem" 
+                component={CargaPatentesSqlite} 
                 options= {{
-                    headerShown: false,
+                    headerShown: false, 
+                    title: 'items',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
@@ -68,14 +71,18 @@ function MyTabs() {
                     },
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons 
-                            name="cash" 
+                            name="playlist-edit" 
                             color={color} 
                             size={size}
                         />
                     )
                 }}
             />
+
         </Tab.Navigator>
+        
+
+        
     )
 }
 
