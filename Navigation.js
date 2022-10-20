@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import HomeScreen from "./screens/HomeScreen";
 import CargaPatentesScreen from "./screens/CargaPatentesScreen";
-import CargaPatentesSqlite from './screens/CargaPatenteSqlite';
+import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 
 
 const Tab = createBottomTabNavigator();

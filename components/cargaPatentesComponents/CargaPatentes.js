@@ -11,11 +11,11 @@ const CargaPatentes = () => {
 
     const navigation = useNavigation();
 
-    const handleButtonPress = () => {
+    const [patente, setPatente] = useState("");
+
+    const postRegistroOnPress = () => {
 
         var obleista = '2';
-
-        var numero = 'IHP555';
 
         var date = moment()
         .format('YYYY-MM-DD');
@@ -30,10 +30,14 @@ const CargaPatentes = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                obleistaid: obleista,
-                patenteid: numero,
-                fecha: date,
-                hora: hour
+                "usuarioObleista": {
+                    "id": 2
+                },
+                "patente": {
+                    "numero": patente
+                },
+                "fecha": date,
+                "hora": hour      
             }),
         })
         .then((response) => response.json())
@@ -42,10 +46,6 @@ const CargaPatentes = () => {
         });
     }
 
-    const navigation = useNavigation();
-
-    const [patente, setPatente] = useState("");
-
     const validateNumero = (patente) => {
         var reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/
         return reg.test(patente);
@@ -53,7 +53,7 @@ const CargaPatentes = () => {
 
     const handleSubmit = () => {
         if (!validateNumero(patente)) {
-            console.log("flashaste pa");
+            console.log("incorrecto");
         } else {
             console.log(patente);
             postRegistroOnPress(patente);
