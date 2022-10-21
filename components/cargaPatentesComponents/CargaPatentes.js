@@ -42,7 +42,7 @@ const CargaPatentes = () => {
         });
     }
 
-    const navigation = useNavigation();
+  
 
     const [patente, setPatente] = useState("");
 
