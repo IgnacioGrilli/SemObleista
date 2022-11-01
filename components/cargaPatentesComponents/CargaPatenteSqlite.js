@@ -32,7 +32,7 @@ function openDatabase() {
 const db = openDatabase();
 
 
-function PatenteLista({}) {
+function PatenteLista({ }) {
 
   const [patentes, setPatentes] = useState([]);
 
@@ -44,7 +44,7 @@ function PatenteLista({}) {
         (_, { rows: { _array } }) => setPatentes(_array)
       );
     });
-  }, []);
+  }, [patentes]);
 
   if (patentes === null || patentes.length === 0) {
     return null;
@@ -62,38 +62,29 @@ function PatenteLista({}) {
 }
 
 
-/* function enviarDatos({}) */
+/* function sendData({}) {
 
-const enviarDatos = () => {
-
-  const [listaPat, setlistaPat] = useState([]);
-
+  const [pat, setpat] = useState([]);
 
   useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
-        `select * from registro_patentes_diarios`,
+        `select patente,fecha from registro_patentes_diarios`,
         [],
-        (_, { rows: { _array } }) => setlistaPat(_array)
+        (_, { rows: { _array } }) => setpat(_array)
       );
     });
-  }, []);
+  }, [pat]);
 
-
-  if (listaPat === null || listaPat.length === 0) {
-    return null;
-  }
- // const obleista = 2;
-
-  const len = listaPat.length ;
+  const len = pat.length ;
   var i;
   for (i = 0; i < len; i++) {
 
-    var patente = listaPat.item.patente;
+    var patente = pat.item.patente;
 
-    var date = listaPat.item.fecha.format('YYYY-MM-DD');
+    var date = pat.item.fecha.format('YYYY-MM-DD');
 
-    var hour = listaPat.item.fecha.format('HH:mm');
+    var hour = pat.item.fecha.format('HH:mm');
 
     fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
       method: 'POST',
@@ -116,11 +107,16 @@ const enviarDatos = () => {
         console.log('Success:', data);
       });
 
-  }
+  } 
 
-  return console.log("enviados exitosamente");
 
-};
+  return console.log("carga exitosa");
+} */
+
+
+
+
+
 
 
 export default function CargaPatentesSqlite() {
@@ -146,9 +142,65 @@ export default function CargaPatentesSqlite() {
 
 
 
-  /*  const enviarDatos = () => {
-   };
-  */
+  const enviarDatos = () => {
+
+    db.transaction(
+      (tx) => {
+        tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) => enviarData(rows));
+      },
+      null,
+      null
+    );
+
+    const enviarData = (listaPat) => {
+
+      //f (listaPat.id = 1)
+      console.log(JSON.stringify(listaPat.length));
+
+
+
+      const len = listaPat.length;
+      let i;
+      for (i = 0; i < len; i++) {
+
+
+
+        var patente = listaPat.item(i).patente;
+
+        var date = listaPat.item(i).fecha.split(' ')[0];
+
+        var hour = listaPat.item(i).fecha.split(' ')[1].utcOffset('+00:00');
+
+        console.log(patente + " " + date + " " + hour);
+
+           /* fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({
+               "usuarioObleista": {
+                 "id": 2
+               },
+               "patente": {
+                 "numero": patente
+               },
+               "fecha": date,
+               "hora": hour
+             }),
+           })
+             .then((response) => response.json())
+             .then((data) => {
+               console.log('Success:', data);
+             });
+ */
+
+      }
+
+      
+    };
+  }
+
   const add2 = (patentetext) => {
 
     // is patentetext empty?
@@ -177,19 +229,6 @@ export default function CargaPatentesSqlite() {
       null
     );
   };
-
-
-  /* const delete2 = () => {
- 
-    db.transaction(
-      (tx) => {
-        tx.executeSql("delete from registro_patentes_diarios");
-      },
-      null,
-      null
-    );
-  }; */
-
 
   const ejemplo = () => {
 
@@ -302,7 +341,7 @@ export default function CargaPatentesSqlite() {
 
           <View style={styles.botton}>
             <Button
-              onPress={() => enviarDatos() }
+              onPress={() => enviarDatos()}
               title="enviar"
               color="red"
             />
