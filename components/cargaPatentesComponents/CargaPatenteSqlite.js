@@ -13,6 +13,7 @@ import {
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
+import Ubicacion from "../../screens/Geolocalizacion";
 
 function openDatabase() {
   if (Platform.OS === "web") {
@@ -32,91 +33,6 @@ function openDatabase() {
 const db = openDatabase();
 
 
-function PatenteLista({ }) {
-
-  const [patentes, setPatentes] = useState([]);
-
-  useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select * from registro_patentes_diarios`,
-        [],
-        (_, { rows: { _array } }) => setPatentes(_array)
-      );
-    });
-  }, [patentes]);
-
-  if (patentes === null || patentes.length === 0) {
-    return null;
-  }
-  return (
-    <View style={styles.sectionContainer}>
-      <FlatList
-        data={patentes}
-        keyExtractor={({ id }, index) => id}
-        renderItem={({ item }) => (
-          <Text>id : {item.id}   patente: {item.patente}  hora:  {item.fecha}</Text>)}
-      />
-    </View>
-  );
-}
-
-
-/* function sendData({}) {
-
-  const [pat, setpat] = useState([]);
-
-  useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select patente,fecha from registro_patentes_diarios`,
-        [],
-        (_, { rows: { _array } }) => setpat(_array)
-      );
-    });
-  }, [pat]);
-
-  const len = pat.length ;
-  var i;
-  for (i = 0; i < len; i++) {
-
-    var patente = pat.item.patente;
-
-    var date = pat.item.fecha.format('YYYY-MM-DD');
-
-    var hour = pat.item.fecha.format('HH:mm');
-
-    fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "usuarioObleista": {
-          "id": 2
-        },
-        "patente": {
-          "numero": patente
-        },
-        "fecha": date,
-        "hora": hour
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-      });
-
-  } 
-
-
-  return console.log("carga exitosa");
-} */
-
-
-
-
-
 
 
 export default function CargaPatentesSqlite() {
@@ -126,15 +42,8 @@ export default function CargaPatentesSqlite() {
   useEffect(() => {
     db.transaction((tx) => {
       //tx.executeSql('DROP TABLE IF EXISTS registro_patentes_diarios');
-      //tx.executeSql(
-      //"create table if not exists items (id integer primary key not null, done int, value text);"
       tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (id integer primary key not null," +
         "patente text not null, fecha text)");
-
-      //tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (patente text primary key not null);");
-
-      //    );
-      //tx.executeSql("insert into registro_patentes_diarios (patente) values (?)",["hola"]);
       console.log(JSON.stringify(patentetext));
 
     });
@@ -203,6 +112,10 @@ export default function CargaPatentesSqlite() {
 
   const add2 = (patentetext) => {
 
+    const localizacion = () => {Ubicacion()};
+
+    console.log(JSON.stringify(localizacion));
+
     // is patentetext empty?
     if (patentetext === null || patentetext === "") {
       return false;
@@ -229,41 +142,6 @@ export default function CargaPatentesSqlite() {
       null
     );
   };
-
-  const ejemplo = () => {
-
-    const obleista = 2;
-
-    var patente = 'AAA000';
-
-    var date = moment()
-      .format('YYYY-MM-DD');
-
-    var hour = moment()
-      .utcOffset('+00:00')
-      .format('HH:mm');
-
-    fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "usuarioObleista": {
-          "id": 2
-        },
-        "patente": {
-          "numero": patente
-        },
-        "fecha": date,
-        "hora": hour
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data);
-      });
-  }
 
   return (
     <View style={styles.container}>
@@ -353,6 +231,35 @@ export default function CargaPatentesSqlite() {
   );
 }
 
+function PatenteLista({ }) {
+
+  const [patentes, setPatentes] = useState([]);
+
+  useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `select * from registro_patentes_diarios`,
+        [],
+        (_, { rows: { _array } }) => setPatentes(_array)
+      );
+    });
+  }, [patentes]);
+
+  if (patentes === null || patentes.length === 0) {
+    return null;
+  }
+  return (
+    <View style={styles.sectionContainer}>
+      <FlatList
+        data={patentes}
+        keyExtractor={({ id }, index) => id}
+        renderItem={({ item }) => (
+          <Text>id : {item.id}   patente: {item.patente}  hora:  {item.fecha}</Text>)}
+      />
+    </View>
+  );
+}
+
 /* function useForceUpdate() {
   const [value, setValue] = useState(0);
   return [() => setValue(value + 1), value];
@@ -407,3 +314,39 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
+
+
+/*   const ejemplo = () => {
+
+    const obleista = 2;
+
+    var patente = 'AAA000';
+
+    var date = moment()
+      .format('YYYY-MM-DD');
+
+    var hour = moment()
+      .utcOffset('+00:00')
+      .format('HH:mm');
+
+    fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "usuarioObleista": {
+          "id": 2
+        },
+        "patente": {
+          "numero": patente
+        },
+        "fecha": date,
+        "hora": hour
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+      });
+  } */

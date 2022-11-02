@@ -7,6 +7,7 @@ import HomeScreen from "./screens/HomeScreen";
 import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
+import Ubicacion from './screens/Geolocalizacion';
 
 
 
@@ -20,7 +21,7 @@ function MyTabs() {
             screenOptions={{
                 tabBarActiveTintColor: 'orange'
             }}
-        > 
+        >
             <Tab.Screen
                 name="Home"
                 component={HomeScreen}
@@ -88,6 +89,27 @@ function MyTabs() {
                 options={{
                     headerShown: false,
                     title: 'pagos diarios',
+                    tabBarLabelStyle: {
+                        fontSize: 11,
+                        marginBottom: 8,
+                        marginTop: -8
+                    },
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons
+                            name="cash"
+                            color={color}
+                            size={size}
+                        />
+                    )
+                }}
+            />
+
+            <Tab.Screen
+                name=" Ubicacion"
+                component={Ubicacion}
+                options={{
+                    headerShown: false,
+                    title: 'ubicacion',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
