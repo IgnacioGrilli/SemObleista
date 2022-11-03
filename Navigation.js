@@ -7,6 +7,7 @@ import HomeScreen from "./screens/HomeScreen";
 import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 
+import CameraScreen from './components/cameraComponents/CameraScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -79,9 +80,28 @@ function MyTabs() {
                 }}
             />
 
-        </Tab.Navigator>
-        
+            <Tab.Screen 
+                name="Camara" 
+                component={CameraScreen} 
+                options= {{
+                    headerShown: false, 
+                    title: 'Camara',
+                    tabBarLabelStyle: {
+                        fontSize: 11,
+                        marginBottom: 8,
+                        marginTop: -8
+                    },
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons 
+                            name="camera" 
+                            color={color} 
+                            size={size}
+                        />
+                    )
+                }}
+            />
 
+        </Tab.Navigator>
         
     )
 }
