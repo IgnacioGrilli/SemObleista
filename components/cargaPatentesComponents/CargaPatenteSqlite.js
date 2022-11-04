@@ -13,7 +13,8 @@ import {
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
-import Ubicacion from "../../screens/Geolocalizacion";
+import * as Location from 'expo-location';
+//import Ubicacion from "../../screens/Geolocalizacion";
 
 function openDatabase() {
   if (Platform.OS === "web") {
@@ -33,22 +34,66 @@ function openDatabase() {
 const db = openDatabase();
 
 
+//const [location, setLocation] = useState(null);
 
 
 export default function CargaPatentesSqlite() {
   const [patentetext, setText] = useState(null);
+  const [location, setLocation] = useState(null);
   // const [forceUpdate, forceUpdateId] = useForceUpdate();
 
   useEffect(() => {
     db.transaction((tx) => {
       //tx.executeSql('DROP TABLE IF EXISTS registro_patentes_diarios');
       tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (id integer primary key not null," +
-        "patente text not null, fecha text)");
+        "patente text not null, fecha text, latitud real, longitud real)"); 
       console.log(JSON.stringify(patentetext));
+      setLocation(GetCurrentLocation());
+
 
     });
   }, []);
 
+
+  async function GetCurrentLocation() {
+
+
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission not granted",
+        "Allow the app to use location service.",
+        [{ text: "OK" }],
+        { cancelable: false }
+      );
+    }
+
+    let { coords } = await Location.getCurrentPositionAsync();
+
+
+    if (coords) {
+      const { latitude, longitude } = coords;
+      setLocation(coords);
+
+      let response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      //return coords;
+
+      /* for (let item of response) {
+        let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+  
+        setUserLocation(address);
+      } */
+    }
+
+    console.log(" cooredenadas dentro del GetCurrent " + coords.latitude);
+    return coords;
+
+  };
 
 
   const enviarDatos = () => {
@@ -78,43 +123,42 @@ export default function CargaPatentesSqlite() {
 
         var date = listaPat.item(i).fecha.split(' ')[0];
 
-        var hour = listaPat.item(i).fecha.split(' ')[1].utcOffset('+00:00');
+        var hour = listaPat.item(i).fecha.split(' ')[1];
 
         console.log(patente + " " + date + " " + hour);
 
-           /* fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
-             method: 'POST',
-             headers: {
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify({
-               "usuarioObleista": {
-                 "id": 2
-               },
-               "patente": {
-                 "numero": patente
-               },
-               "fecha": date,
-               "hora": hour
-             }),
-           })
-             .then((response) => response.json())
-             .then((data) => {
-               console.log('Success:', data);
-             });
- */
+        fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "usuarioObleista": {
+              "id": 2
+            },
+            "patente": {
+              "numero": patente
+            },
+            "fecha": date,
+            "hora": hour
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+          });
+
 
       }
 
-      
+
     };
   }
 
-  const add2 = (patentetext) => {
+  const add2 = (patentetext, location) => {
 
-    const localizacion = () => {Ubicacion()};
-
-    console.log(JSON.stringify(localizacion));
+    console.log("location en el add: ");
+    console.log(JSON.stringify("lati: " + location.latitude + "longi: " + location.longitude));
 
     // is patentetext empty?
     if (patentetext === null || patentetext === "") {
@@ -133,7 +177,7 @@ export default function CargaPatentesSqlite() {
     console.log(JSON.stringify(patentetext))
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into registro_patentes_diarios (patente,fecha) values (?,?)", [patentetext, date]);
+        tx.executeSql("insert into registro_patentes_diarios (patente,fecha,latitud,longitud) values (?,?,?,?)", [patentetext, date,location.latitude,location.longitude]);
         tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
@@ -141,7 +185,10 @@ export default function CargaPatentesSqlite() {
       null,
       null
     );
+
+
   };
+
 
   return (
     <View style={styles.container}>
@@ -161,7 +208,7 @@ export default function CargaPatentesSqlite() {
             <TextInput
               onChangeText={(patentetext) => setText(patentetext)}
               onSubmitEditing={() => {
-                add2(patentetext);
+                //add2(patentetext);
                 setText(null);
               }}
               autoCapitalize="characters"
@@ -197,7 +244,10 @@ export default function CargaPatentesSqlite() {
 
           <View style={styles.botton}>
             <Button
-              onPress={() => add2(patentetext)}
+              onPress={() => {
+                GetCurrentLocation();
+                add2(patentetext, location)
+              }}
               title="guardar"
               color="orange"
             />

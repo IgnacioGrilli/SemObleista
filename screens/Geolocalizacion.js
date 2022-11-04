@@ -29,12 +29,11 @@ export default function Ubicacion() {
         text = errorMsg;
     } else if (location) {
         text = JSON.stringify(location);
+
     }
+    const textLocation = location;
 
-
-
-    //return  location;
-
+  
     return (
         <View style={styles.container}>
             <Text style={styles.paragraph}>{text}</Text>
