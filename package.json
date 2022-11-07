@@ -21,12 +21,13 @@
     "expo-status-bar": "~1.4.0",
     "moment": "^2.29.4",
     "react": "18.0.0",
-    "react-native": "0.69.5",
+    "react-native": "0.69.6",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-ico-material-design": "^3.3.1",
     "react-native-safe-area-context": "4.3.1",
     "react-native-screens": "~3.15.0",
-    "react-native-svg": "^13.2.0",
+    "react-native-svg": "12.3.0",
+    "react-native-tesseract-ocr": "^2.0.3",
     "yet": "^0.1.0"
   },
   "devDependencies": {
