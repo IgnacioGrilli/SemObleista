@@ -33,9 +33,12 @@ function openDatabase() {
 const db = openDatabase();
 
 
-function PatenteLista({}) {
+function PatenteLista({ onPressItem }) {
 
   const [patentes, setPatentes] = useState([]);
+
+  // console.log("presiono: ");
+  // console.log(JSON.stringify(onPressItem));
 
   useEffect(() => {
     db.transaction((tx) => {
@@ -51,13 +54,31 @@ function PatenteLista({}) {
     return null;
   }
   return (
+    /*  <View style={styles.sectionContainer}>
+       <FlatList
+         data={patentes}
+         keyExtractor={({ id }, index) => id}
+         renderItem={({ item }) => (
+           <Text>{item.id}  patente: {item.patente}  hora:  {item.fecha} valor: ${item.valor}</Text>)}
+       />
+     </View> */
+
     <View style={styles.sectionContainer}>
-      <FlatList
-        data={patentes}
-        keyExtractor={({ id }, index) => id}
-        renderItem={({ item }) => (
-          <Text>{item.id}  patente: {item.patente}  hora:  {item.fecha} valor: ${item.valor}</Text> )}
-      />
+      <Text style={styles.sectionHeading}>PAGOS</Text>
+      {patentes.map(({ id, patente }) => (
+        <TouchableOpacity
+          key={id}
+          onPress={() => onPressItem(id)}
+          style={{
+            backgroundColor: "#fff",
+            borderColor: "#000",
+            borderWidth: 1,
+            padding: 8,
+          }}
+        >
+          <Text>{patente}</Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
@@ -84,11 +105,11 @@ export default function PagosDiarios() {
     });
   }, []);
 
-  const add2 = (patentetext,valor) => {
+  const add2 = (patentetext, valor) => {
 
     // is patentetext empty?
     if (patentetext === null || patentetext === "") {
-      return  Alert.alert(
+      return Alert.alert(
         "Complete el campo de patente",
         "Campo de patente incompleto",
         [
@@ -97,8 +118,8 @@ export default function PagosDiarios() {
       );
     }
 
-    if (valor === null || valor  === "") {
-      return  Alert.alert(
+    if (valor === null || valor === "") {
+      return Alert.alert(
         "Complete el campo de valor",
         "Campo de valor incompleto",
         [
@@ -126,7 +147,7 @@ export default function PagosDiarios() {
 
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into registro_pagos_diarios (patente,fecha,valor) values (?,?,?)", [patentetext, date,valor]);
+        tx.executeSql("insert into registro_pagos_diarios (patente,fecha,valor) values (?,?,?)", [patentetext, date, valor]);
         tx.executeSql("select * from registro_pagos_diarios", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
@@ -154,8 +175,8 @@ export default function PagosDiarios() {
             <TextInput
               onChangeText={(patentetext) => setText(patentetext)}
               onSubmitEditing={() => {
-               // add2(patentetext);
-                setText(null);
+                // add2(patentetext);
+                //setText(null);
               }}
               autoCapitalize="characters"
               maxLength={7}
@@ -167,33 +188,52 @@ export default function PagosDiarios() {
             <TextInput
               onChangeText={(valor) => setValor(valor)}
               onSubmitEditing={() => {
-               setValor(null);
+                //setValor(null);
               }}
               autoCapitalize="characters"
               maxLength={7}
               placeholder="ingrese el monto a pagar"
               style={styles.input}
               value={valor}
-              keyboardType = "decimal-pad"
+              keyboardType="decimal-pad"
             />
           </View>
 
-          <View style={styles.sectionContainer}>
-            <PatenteLista />
+
+          <View style={styles.listArea}>
+            <PatenteLista
+              done
+              key={id}
+              onPressItem={(id) =>
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`delete from registro_pagos_diarios where id = ?;`, [id]);
+                  },
+                  null,
+                  null
+                )
+              }
+            />
           </View>
 
-          
+
+
           <View style={styles.botton}>
             <Button
-              onPress={(tx) => db.transaction(
-                (tx) => {
-                  tx.executeSql("delete from registro_pagos_diarios");
-                },
-                null,
-                null
-              )}
+              onPress={(tx) => {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql("delete from registro_pagos_diarios");
+                  },
+                  null,
+                  null
+                );
+                setText(null);
+                setValor(null);
+              }}
               title="borrar"
               color="green"
+
             />
           </View>
 
@@ -217,13 +257,17 @@ export default function PagosDiarios() {
 
           <View style={styles.botton}>
             <Button
-              onPress={() => add2(patentetext,valor)}
+              onPress={() => {
+                add2(patentetext, valor);
+                /* setText(null);
+                setValor(null); */
+              }}
               title="guardar"
               color="orange"
             />
           </View>
 
-          
+
 
         </>
       )}
@@ -272,7 +316,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   listArea: {
-    backgroundColor: "#f0f0f0",
+    // backgroundColor: "#f0f0f0",
     flex: 1,
     paddingTop: 16,
   },

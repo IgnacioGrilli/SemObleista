@@ -15,6 +15,7 @@ import * as SQLite from "expo-sqlite";
 import moment from "moment";
 import * as Location from 'expo-location';
 //import Ubicacion from "../../screens/Geolocalizacion";
+//import CameraScrenn from "../../screens/cameraScrenn/CameraScrenn";
 
 function openDatabase() {
   if (Platform.OS === "web") {
@@ -220,9 +221,12 @@ export default function CargaPatentesSqlite() {
 
           </View>
 
-          <View style={styles.sectionContainer}>
+
+          
+          <View style={styles.listArea}>
             <PatenteLista />
           </View>
+         
 
 
           <View style={styles.botton}>
@@ -245,14 +249,15 @@ export default function CargaPatentesSqlite() {
           <View style={styles.botton}>
             <Button
               onPress={() => {
+               // setText(null);
                 GetCurrentLocation();
-                add2(patentetext, location)
+                add2(patentetext, location);
+                
               }}
               title="guardar"
               color="orange"
             />
           </View>
-
           <View style={styles.botton}>
             <Button
               onPress={(tx) => db.transaction(
@@ -282,6 +287,7 @@ export default function CargaPatentesSqlite() {
 }
 
 function PatenteLista({ }) {
+  
 
   const [patentes, setPatentes] = useState([]);
 
@@ -351,7 +357,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   listArea: {
-    backgroundColor: "#f0f0f0",
+  //  backgroundColor: "#f0f0f0",
     flex: 1,
     paddingTop: 16,
   },

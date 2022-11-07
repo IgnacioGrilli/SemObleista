@@ -1,5 +1,13 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
     "name": "semFrontObleista",
     "slug": "semFrontObleista",
     "version": "1.0.0",
@@ -28,8 +36,9 @@
       "permissions": [
         "LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-
+        "ACCESS_FINE_LOCATION",
+        "CAMERA_ROLL",
+        "CAMERA"
       ]
     },
     "web": {
