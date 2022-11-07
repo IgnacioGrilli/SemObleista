@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
+import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity, Alert } from 'react-native';
+
 import Control from './CargaPatentesController';
 import CargaPatentesFetch from './CargaPatentesFetch';
+import GetCurrentLocation from './GetLocation.js'
 
 const CargaPatentes = () => {
 
@@ -11,11 +14,11 @@ const CargaPatentes = () => {
 
     const navigation = useNavigation();
 
-    const handleButtonPress = () => {
+    const [patente, setPatente] = useState("");
+
+    const postRegistroOnPress = () => {
 
         var obleista = '2';
-
-        var numero = 'IHP555';
 
         var date = moment()
         .format('YYYY-MM-DD');
@@ -30,10 +33,14 @@ const CargaPatentes = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                obleistaid: obleista,
-                patenteid: numero,
-                fecha: date,
-                hora: hour
+                "usuarioObleista": {
+                    "id": 2
+                },
+                "patente": {
+                    "numero": patente
+                },
+                "fecha": date,
+                "hora": hour      
             }),
         })
         .then((response) => response.json())
@@ -42,10 +49,6 @@ const CargaPatentes = () => {
         });
     }
 
-  
-
-    const [patente, setPatente] = useState("");
-
     const validateNumero = (patente) => {
         var reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/
         return reg.test(patente);
@@ -53,12 +56,75 @@ const CargaPatentes = () => {
 
     const handleSubmit = () => {
         if (!validateNumero(patente)) {
-            console.log("flashaste pa");
+            console.log("incorrecto");
         } else {
             console.log(patente);
-            postRegistroOnPress(patente);
+        //    postRegistroOnPress(patente);
         }
     }
+
+    const [location, setLocation] = useState(false);
+
+    const requestLocationPermission = async () => {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Geolocation Permission',
+              message: 'Can we access your location?',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          console.log('granted', granted);
+          if (granted === 'granted') {
+            console.log('You can use Geolocation');
+            return true;
+          } else {
+            console.log('You cannot use Geolocation');
+            return false;
+          }
+        } catch (err) {
+          return false;
+        }
+      };
+
+    const getLocation = () => {
+        const result = requestLocationPermission();
+        result.then(res => {
+          console.log('res is:', res);
+          if (res) {
+            Geolocation.getCurrentPosition(
+              position => {
+                console.log(position);
+                setLocation(position);
+              },
+              error => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+                setLocation(false);
+              },
+              {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+            );
+          }
+        });
+        console.log(location);
+      };
+      
+    function success(pos) {
+        const crd = pos.coords;
+      
+        console.log('Your current position is:');
+        console.log(`Latitude : ${crd.latitude}`);
+        console.log(`Longitude: ${crd.longitude}`);
+        console.log(`More or less ${crd.accuracy} meters.`);
+    }
+      
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+    
 
     return(
         <SafeAreaView>
@@ -79,11 +145,18 @@ const CargaPatentes = () => {
                         maxLength={7}
                         value={patente}
                     />
+                    <Button title="Get Location" onPress={getLocation} />
                 </SafeAreaView>
             </View>
         </SafeAreaView>
     );
 
+}
+
+function GetLocation({ isVisibleModal, setVisibleModal }) {
+    return (
+        Alert.alert()
+    )
 }
 
 const styles = StyleSheet.create({

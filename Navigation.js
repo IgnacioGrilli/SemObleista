@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -11,6 +12,31 @@ import Ubicacion from './screens/Geolocalizacion';
 import CameraScrenn from './screens/cameraScrenn/CameraScrenn';
 
 
+import CameraScreen from './components/cameraComponents/CameraScreen';
+
+
+const HomeStackNavigator = createNativeStackNavigator();
+
+
+function MyStack() {
+    return(
+        <HomeStackNavigator.Navigator
+            initialRouteName="Home"
+        >
+
+            <HomeStackNavigator.Screen
+                name="Inicio"
+                component={HomeScreen}
+            />
+
+            <HomeStackNavigator.Screen
+                name="CameraScreen"
+                component={CameraScreen}
+            />
+
+        </HomeStackNavigator.Navigator>
+    )
+}
 
 const Tab = createBottomTabNavigator();
 

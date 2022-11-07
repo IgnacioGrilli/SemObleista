@@ -34,11 +34,11 @@
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
+        "CAMERA_ROLL",
+        "CAMERA",
         "LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "CAMERA_ROLL",
-        "CAMERA"
+        "ACCES_FINE_LOCATION"
       ]
     },
     "web": {

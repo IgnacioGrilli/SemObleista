@@ -17,6 +17,7 @@ import * as Location from 'expo-location';
 //import Ubicacion from "../../screens/Geolocalizacion";
 //import CameraScrenn from "../../screens/cameraScrenn/CameraScrenn";
 
+
 function openDatabase() {
   if (Platform.OS === "web") {
     return {
@@ -227,7 +228,6 @@ export default function CargaPatentesSqlite() {
             <PatenteLista />
           </View>
          
-
 
           <View style={styles.botton}>
             <Button
