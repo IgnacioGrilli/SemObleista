@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -8,6 +9,30 @@ import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 
 import CameraScreen from './components/cameraComponents/CameraScreen';
+
+
+const HomeStackNavigator = createNativeStackNavigator();
+
+
+function MyStack() {
+    return(
+        <HomeStackNavigator.Navigator
+            initialRouteName="Home"
+        >
+
+            <HomeStackNavigator.Screen
+                name="Inicio"
+                component={HomeScreen}
+            />
+
+            <HomeStackNavigator.Screen
+                name="CameraScreen"
+                component={CameraScreen}
+            />
+
+        </HomeStackNavigator.Navigator>
+    )
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +46,7 @@ function MyTabs() {
         >
             <Tab.Screen 
                 name="Home" 
-                component={HomeScreen} 
+                component={MyStack} 
                 options= {{
                     headerShown: false, 
                     title: 'Inicio',

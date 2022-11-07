@@ -14,6 +14,7 @@ import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
 
+
 function openDatabase() {
   if (Platform.OS === "web") {
     return {
@@ -199,7 +200,6 @@ export default function CargaPatentesSqlite() {
               <PatenteLista/>
             
           </View>
-
 
           <View style={styles.botton}>
             <Button

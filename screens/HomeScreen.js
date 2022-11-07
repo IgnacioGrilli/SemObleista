@@ -12,6 +12,11 @@ const HomeScreen = () => {
             <Text style={styles.title}>
                 Bienvenido al SEM obleista!
             </Text>
+            <Button
+                title="camara"
+                onPress={() => navigation.navigate("CameraScreen")}
+            >
+            </Button>
         </View>
     
     );
