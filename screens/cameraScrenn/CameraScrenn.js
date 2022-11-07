@@ -2,12 +2,13 @@ import React from 'react';
 import { Image, StyleSheet, Button, Text, View, Alert, } from 'react-native';
 //import { ImagePicker } from 'expo-image-picker';
 
-import * as ImagePicker from 'expo-image-picker'
+//import * as ImagePicker from 'expo-image-picker'
 //import * as firebase from 'firebase';
 import { firebase } from '../../configFirebase';
 
 
 //const CameraScrenn = () => {}
+
 export default class CameraScrenn extends React.Component {
   static navigationOptions = {
     header: null,

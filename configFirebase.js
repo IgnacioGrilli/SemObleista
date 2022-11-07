@@ -1,4 +1,4 @@
-import firebase from 'firebase/compat/app';
+/* import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore'
 import 'firebase/compat/storage'
@@ -39,4 +39,4 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app); */
+const analytics = getAnalytics(app); */ 

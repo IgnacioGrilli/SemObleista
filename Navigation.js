@@ -9,10 +9,11 @@ import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
 import Ubicacion from './screens/Geolocalizacion';
-import CameraScrenn from './screens/cameraScrenn/CameraScrenn';
+//import CameraScrenn from './screens/cameraScrenn/CameraScrenn';
 
 
 import CameraScreen from './components/cameraComponents/CameraScreen';
+
 
 
 const HomeStackNavigator = createNativeStackNavigator();
@@ -129,7 +130,7 @@ function MyTabs() {
                     )
                 }}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 name=" camara"
                 component={CameraScrenn}
                 options={{
@@ -148,7 +149,7 @@ function MyTabs() {
                         />
                     )
                 }}
-            /> 
+            />  */}
             
 
           {/*   <Tab.Screen
