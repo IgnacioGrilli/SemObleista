@@ -51,7 +51,7 @@ function MyTabs() {
         >
             <Tab.Screen
                 name="Home"
-                component={HomeScreen}
+                component={MyStack}
                 options={{
                     headerShown: false,
                     title: 'Inicio',

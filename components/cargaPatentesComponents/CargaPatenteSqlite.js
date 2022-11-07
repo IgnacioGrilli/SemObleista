@@ -14,6 +14,8 @@ import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
 import * as Location from 'expo-location';
+import { useNavigation } from '@react-navigation/native';
+
 //import Ubicacion from "../../screens/Geolocalizacion";
 //import CameraScrenn from "../../screens/cameraScrenn/CameraScrenn";
 
@@ -40,15 +42,19 @@ const db = openDatabase();
 
 
 export default function CargaPatentesSqlite() {
+
+  const navigation = useNavigation();
   const [patentetext, setText] = useState(null);
   const [location, setLocation] = useState(null);
+
+
   // const [forceUpdate, forceUpdateId] = useForceUpdate();
 
   useEffect(() => {
     db.transaction((tx) => {
       //tx.executeSql('DROP TABLE IF EXISTS registro_patentes_diarios');
       tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (id integer primary key not null," +
-        "patente text not null, fecha text, latitud real, longitud real)"); 
+        "patente text not null, fecha text, latitud real, longitud real)");
       console.log(JSON.stringify(patentetext));
       setLocation(GetCurrentLocation());
 
@@ -179,7 +185,7 @@ export default function CargaPatentesSqlite() {
     console.log(JSON.stringify(patentetext))
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into registro_patentes_diarios (patente,fecha,latitud,longitud) values (?,?,?,?)", [patentetext, date,location.latitude,location.longitude]);
+        tx.executeSql("insert into registro_patentes_diarios (patente,fecha,latitud,longitud) values (?,?,?,?)", [patentetext, date, location.latitude, location.longitude]);
         tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
@@ -219,15 +225,21 @@ export default function CargaPatentesSqlite() {
               style={styles.input}
               value={patentetext}
             />
-
+          </View>
+          <View  >
+            <Button
+              title="camara"
+              onPress={() => navigation.navigate("CameraScreen")}
+            >
+            </Button>
           </View>
 
 
-          
+
           <View style={styles.listArea}>
             <PatenteLista />
           </View>
-         
+
 
           <View style={styles.botton}>
             <Button
@@ -249,10 +261,10 @@ export default function CargaPatentesSqlite() {
           <View style={styles.botton}>
             <Button
               onPress={() => {
-               // setText(null);
+                // setText(null);
                 GetCurrentLocation();
                 add2(patentetext, location);
-                
+
               }}
               title="guardar"
               color="orange"
@@ -287,7 +299,7 @@ export default function CargaPatentesSqlite() {
 }
 
 function PatenteLista({ }) {
-  
+
 
   const [patentes, setPatentes] = useState([]);
 
@@ -357,7 +369,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   listArea: {
-  //  backgroundColor: "#f0f0f0",
+    //  backgroundColor: "#f0f0f0",
     flex: 1,
     paddingTop: 16,
   },

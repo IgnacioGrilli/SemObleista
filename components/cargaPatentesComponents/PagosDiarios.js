@@ -63,9 +63,10 @@ function PatenteLista({ onPressItem }) {
        />
      </View> */
 
-    <View style={styles.sectionContainer}>
-      <Text style={styles.sectionHeading}>PAGOS</Text>
-      {patentes.map(({ id, patente }) => (
+    <View style={styles.listArea}>
+      <Text style={styles.sectionHeding}>PAGOS</Text>
+      {patentes.map(({ id, patente,valor,fecha }) => (
+        
         <TouchableOpacity
           key={id}
           onPress={() => onPressItem(id)}
@@ -76,8 +77,11 @@ function PatenteLista({ onPressItem }) {
             padding: 8,
           }}
         >
-          <Text>{patente}</Text>
+          <Text>{patente}  monto: ${valor}  hora: {fecha.split(' ')[1]} </Text>
+          
+          
         </TouchableOpacity>
+        
       ))}
     </View>
   );
@@ -198,22 +202,54 @@ export default function PagosDiarios() {
               keyboardType="decimal-pad"
             />
           </View>
+          <View  >
+            <Button
+              title="50$"
+             onPress={() => {setValor(50);}}
+            >
+            </Button>
+            <Button
+              title="100$"
+            // onPress={() => navigation.navigate("CameraScreen")}
+            >
+            </Button>
+            <Button
+              title="500$"
+            // onPress={() => navigation.navigate("CameraScreen")}
+            >
+            </Button>
+          </View>
+          
 
 
           <View style={styles.listArea}>
+          <ScrollView style={styles.sectionContainer}> 
             <PatenteLista
-              done
               key={id}
               onPressItem={(id) =>
-                db.transaction(
-                  (tx) => {
-                    tx.executeSql(`delete from registro_pagos_diarios where id = ?;`, [id]);
-                  },
-                  null,
-                  null
+                Alert.alert(
+                  "Alert",
+                  "Borrar Registro ??",
+                  [
+                    {
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel Pressed"),
+                      style: "cancel"
+                    },
+                    { text: "OK", onPress: () =>
+                    db.transaction(
+                      (tx) => {
+                        tx.executeSql(`delete from registro_pagos_diarios where id = ?;`, [id]);
+                      },
+                      null,
+                      null
+                    )}
+                  ]
                 )
+                
               }
             />
+            </ScrollView>
           </View>
 
 
@@ -274,6 +310,9 @@ export default function PagosDiarios() {
     </View>
   );
 }
+
+
+
 
 /* function useForceUpdate() {
   const [value, setValue] = useState(0);
