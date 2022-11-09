@@ -133,6 +133,10 @@ export default function CargaPatentesSqlite() {
 
         var hour = listaPat.item(i).fecha.split(' ')[1];
 
+        var lat = listaPat.item(i).latitud;
+
+        var longi = listaPat.item(i).longitud;
+
         console.log(patente + " " + date + " " + hour);
 
         fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
@@ -148,7 +152,9 @@ export default function CargaPatentesSqlite() {
               "numero": patente
             },
             "fecha": date,
-            "hora": hour
+            "hora": hour,
+            "latitud": lat,
+            "longitud": longi
           }),
         })
           .then((response) => response.json())

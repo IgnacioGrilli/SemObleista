@@ -64,7 +64,7 @@ function PatenteLista({ onPressItem }) {
      </View> */
 
     <View style={styles.listArea}>
-      <Text style={styles.sectionHeding}>PAGOS</Text>
+      <Text>PAGOS</Text>
       {patentes.map(({ id, patente,valor,fecha }) => (
         
         <TouchableOpacity
@@ -202,22 +202,25 @@ export default function PagosDiarios() {
               keyboardType="decimal-pad"
             />
           </View>
+
           <View  >
-            <Button
+            <Button 
               title="50$"
              onPress={() => {setValor(50);}}
             >
             </Button>
             <Button
               title="100$"
+              onPress={() => {setValor(100);}}
             // onPress={() => navigation.navigate("CameraScreen")}
             >
             </Button>
             <Button
               title="500$"
+              onPress={() => {setValor(500);}} 
             // onPress={() => navigation.navigate("CameraScreen")}
             >
-            </Button>
+            </Button> 
           </View>
           
 
@@ -295,8 +298,8 @@ export default function PagosDiarios() {
             <Button
               onPress={() => {
                 add2(patentetext, valor);
-                /* setText(null);
-                setValor(null); */
+                setText(null);
+                setValor(null); 
               }}
               title="guardar"
               color="orange"
@@ -344,6 +347,14 @@ const styles = StyleSheet.create({
   },
   flexRow: {
     flexDirection: "row",
+     margin: 5,
+  },
+  flexRowButon: {
+    flexDirection: "row",
+     margin: 5,
+     padding: 4,
+     height: 50,
+     fontSize: 8,
   },
   input: {
     borderColor: "#4630eb",
