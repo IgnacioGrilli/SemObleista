@@ -31,6 +31,7 @@ function openDatabase() {
 }
 
 const db = openDatabase();
+const valorMinuto = 0.6;
 
 
 function PatenteLista({ onPressItem }) {
@@ -54,18 +55,9 @@ function PatenteLista({ onPressItem }) {
     return null;
   }
   return (
-    /*  <View style={styles.sectionContainer}>
-       <FlatList
-         data={patentes}
-         keyExtractor={({ id }, index) => id}
-         renderItem={({ item }) => (
-           <Text>{item.id}  patente: {item.patente}  hora:  {item.fecha} valor: ${item.valor}</Text>)}
-       />
-     </View> */
-
     <View style={styles.listArea}>
       <Text>PAGOS</Text>
-      {patentes.map(({ id, patente,valor,fecha }) => (
+      {patentes.map(({ id, patente,valor,fecha,fechaFin}) => (
         
         <TouchableOpacity
           key={id}
@@ -77,7 +69,7 @@ function PatenteLista({ onPressItem }) {
             padding: 8,
           }}
         >
-          <Text>{patente}  monto: ${valor}  hora: {fecha.split(' ')[1]} </Text>
+          <Text>{patente}  monto: ${valor}  hrInicio: {fecha.split(' ')[1]}  hrFIN: {fechaFin.split(' ')[1]}</Text>
           
           
         </TouchableOpacity>
@@ -97,8 +89,8 @@ export default function PagosDiarios() {
       //tx.executeSql('DROP TABLE IF EXISTS registro_pagos_diarios');
       //tx.executeSql(
       //"create table if not exists items (id integer primary key not null, done int, value text);"
-      tx.executeSql("CREATE TABLE if not exists registro_pagos_diarios (id integer primary key not null," +
-        "patente text not null, fecha text, valor integer not null)");
+       tx.executeSql("CREATE TABLE if not exists registro_pagos_diarios (id integer primary key not null," +
+        "patente text not null, fecha text, valor integer not null, fechaFin text)"); 
 
       //tx.executeSql("CREATE TABLE if not exists registro_pagos_diarios (patente text primary key not null);");
 
@@ -146,12 +138,22 @@ export default function PagosDiarios() {
     }
 
     var date = moment().format('YYYY-MM-DD HH:mm');
-    console.log(JSON.stringify(patentetext))
-    console.log(JSON.stringify(valor))
+    console.log(JSON.stringify(patentetext));
+    console.log(JSON.stringify(valor));
+    console.log(JSON.stringify(date));
+
+     var sumaMinutos =  (valor * valorMinuto);
+
+     console.log(sumaMinutos);
+
+     var dateFIN = moment().add(sumaMinutos,'m');
+     var dateFinaux = dateFIN.format('YYYY-MM-DD HH:mm');
+
+    console.log(dateFIN.format('YYYY-MM-DD HH:mm'));
 
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into registro_pagos_diarios (patente,fecha,valor) values (?,?,?)", [patentetext, date, valor]);
+        tx.executeSql("insert into registro_pagos_diarios (patente,fecha,valor,fechaFin) values (?,?,?,?)", [patentetext, date, valor,dateFinaux]);
         tx.executeSql("select * from registro_pagos_diarios", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
@@ -228,7 +230,7 @@ export default function PagosDiarios() {
           <View style={styles.listArea}>
           <ScrollView style={styles.sectionContainer}> 
             <PatenteLista
-              key={id}
+           //   key={id}
               onPressItem={(id) =>
                 Alert.alert(
                   "Alert",

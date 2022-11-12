@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+/* import { useState, useEffect } from "react";
 import {
     Platform,
     ScrollView,
@@ -144,7 +144,7 @@ export default function CargaPatentesSqlite() {
     /*  const enviarDatos = () => {
      };
     */
-    const add2 = (patentetext) => {
+    /* const add2 = (patentetext) => {
 
         // is patentetext empty?
         if (patentetext === null || patentetext === "") {
@@ -171,7 +171,7 @@ export default function CargaPatentesSqlite() {
             null,
             null
         );
-    };
+    }; */
 
 
     /* const delete2 = () => {
@@ -186,7 +186,7 @@ export default function CargaPatentesSqlite() {
     }; */
 
 
-    const ejemplo = () => {
+   /*  const ejemplo = () => {
 
         const obleista = 2;
 
@@ -308,12 +308,12 @@ export default function CargaPatentesSqlite() {
         </View>
     );
 }
-
+ */
 /* function useForceUpdate() {
   const [value, setValue] = useState(0);
   return [() => setValue(value + 1), value];
 } */
-
+/*
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#fff",
@@ -362,4 +362,4 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 8,
     },
-});
+}); */

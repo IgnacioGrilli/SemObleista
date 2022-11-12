@@ -10,6 +10,7 @@ import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPaten
 import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
 import Ubicacion from './screens/Geolocalizacion';
 //import CameraScrenn from './screens/cameraScrenn/CameraScrenn';
+import EnvioDatos from "./screens/EnvioDatos"
 
 
 import CameraScreen from './components/cameraComponents/CameraScreen';
@@ -130,12 +131,12 @@ function MyTabs() {
                     )
                 }}
             />
-            {/* <Tab.Screen
+             <Tab.Screen
                 name=" camara"
-                component={CameraScrenn}
+                component={EnvioDatos}
                 options={{
                     headerShown: false,
-                    title: 'camera',
+                    title: 'Enviar Datos',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
@@ -149,7 +150,7 @@ function MyTabs() {
                         />
                     )
                 }}
-            />  */}
+            />  
             
 
           {/*   <Tab.Screen
