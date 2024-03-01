@@ -1,5 +1,6 @@
 {
   "expo": {
+   
     "name": "semFrontObleista",
     "slug": "semFrontObleista",
     "version": "1.0.0",
@@ -24,7 +25,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "CAMERA_ROLL",
+        "CAMERA",
+        "LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCES_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

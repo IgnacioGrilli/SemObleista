@@ -13,6 +13,12 @@ import {
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
+import * as Location from 'expo-location';
+import { useNavigation } from '@react-navigation/native';
+
+//import Ubicacion from "../../screens/Geolocalizacion";
+//import CameraScrenn from "../../screens/cameraScrenn/CameraScrenn";
+
 
 function openDatabase() {
   if (Platform.OS === "web") {
@@ -31,97 +37,142 @@ function openDatabase() {
 
 const db = openDatabase();
 
-function PatenteLista({}) {
-  const [patentes, setPatentes] = useState(null);
 
-  
-  useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select * from registro_patentes_diarios`,
-        [],
-        (_, { rows: { _array } }) => setPatentes(_array)
-      );
-    });
-  }, patentes);
-
-  if (patentes === null || patentes.length === 0) {
-    return null;
-  }
-  return (
-    <View style={styles.sectionContainer}>
-      <FlatList
-        data={patentes}
-        keyExtractor={({ id }, index) => id}
-        renderItem={({ item }) => (
-          <Text>id : {item.id}   patente: {item.patente}  hora:  {item.fecha}</Text>)}
-      />
-    </View>
-  );
-}
+//const [location, setLocation] = useState(null);
 
 
 export default function CargaPatentesSqlite() {
+
+  const navigation = useNavigation();
   const [patentetext, setText] = useState(null);
+  const [location, setLocation] = useState(null);
+
+
   // const [forceUpdate, forceUpdateId] = useForceUpdate();
-
-
 
   useEffect(() => {
     db.transaction((tx) => {
       //tx.executeSql('DROP TABLE IF EXISTS registro_patentes_diarios');
-      //tx.executeSql(
-      //"create table if not exists items (id integer primary key not null, done int, value text);"
       tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (id integer primary key not null," +
-        "patente text not null, fecha text)");
-
-      //tx.executeSql("CREATE TABLE if not exists registro_patentes_diarios (patente text primary key not null);");
-
-      //    );
-      //tx.executeSql("insert into registro_patentes_diarios (patente) values (?)",["hola"]);
+        "patente text not null, fecha text, latitud real, longitud real)");
       console.log(JSON.stringify(patentetext));
+      setLocation(GetCurrentLocation());
+
 
     });
   }, []);
 
 
-  const enviarDatos = () => {
+  async function GetCurrentLocation() {
 
 
-    const [patentes, setPatentes] = useState(null);
+    let { status } = await Location.requestForegroundPermissionsAsync();
 
-  
-    useEffect(() => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          `select * from registro_patentes_diarios`,
-          [],
-          (_, { rows: { _array } }) => setPatentes(_array)
-        );
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission not granted",
+        "Allow the app to use location service.",
+        [{ text: "OK" }],
+        { cancelable: false }
+      );
+    }
+
+    let { coords } = await Location.getCurrentPositionAsync();
+
+
+    if (coords) {
+      const { latitude, longitude } = coords;
+      setLocation(coords);
+
+      let response = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
       });
-    }, patentes);
 
+      //return coords;
 
-    const data = { numero : 'IHP555' };
-
-
-    fetch('http://if012app.fi.mdn.unp.edu.ar:28001/patentes/new', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-  })
-  .then((response) => response.json())
-  .then((data) => {
-      console.log('Success:', data);
-  });
-
+      /* for (let item of response) {
+        let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
   
- 
+        setUserLocation(address);
+      } */
+    }
+
+    console.log(" cooredenadas dentro del GetCurrent " + coords.latitude);
+    return coords;
+
   };
 
-  const add2 = (patentetext) => {
+
+  const enviarDatos = () => {
+
+    db.transaction(
+      (tx) => {
+        tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) => enviarData(rows));
+      },
+      null,
+      null
+    );
+
+    const enviarData = (listaPat) => {
+
+      //f (listaPat.id = 1)
+      console.log(JSON.stringify(listaPat.length));
+
+
+
+      const len = listaPat.length;
+      let i;
+      for (i = 0; i < len; i++) {
+
+
+
+        var patente = listaPat.item(i).patente;
+
+        var date = listaPat.item(i).fecha.split(' ')[0];
+
+        var hour = listaPat.item(i).fecha.split(' ')[1];
+
+        var lat = listaPat.item(i).latitud;
+
+        var longi = listaPat.item(i).longitud;
+
+        console.log(patente + " " + date + " " + hour);
+
+        fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "usuarioObleista": {
+              "id": 2
+            },
+            "patente": {
+              "numero": patente
+            },
+            "fecha": date,
+            "hora": hour,
+            "latitud": lat,
+            "longitud": longi
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Success:', data);
+          });
+
+
+      }
+
+
+    };
+  }
+
+  const add2 = (patentetext, location) => {
+
+    console.log("location en el add: ");
+    console.log(JSON.stringify("lati: " + location.latitude + "longi: " + location.longitude));
 
     // is patentetext empty?
     if (patentetext === null || patentetext === "") {
@@ -140,7 +191,7 @@ export default function CargaPatentesSqlite() {
     console.log(JSON.stringify(patentetext))
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into registro_patentes_diarios (patente,fecha) values (?,?)", [patentetext, date]);
+        tx.executeSql("insert into registro_patentes_diarios (patente,fecha,latitud,longitud) values (?,?,?,?)", [patentetext, date, location.latitude, location.longitude]);
         tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
@@ -148,22 +199,10 @@ export default function CargaPatentesSqlite() {
       null,
       null
     );
+
+
   };
 
-
-  const delete2 = () => {
-
-    db.transaction(
-      (tx) => {
-        tx.executeSql("delete from registro_patentes_diarios");
-        /* tx.executeSql("select * from registro_patentes_diarios", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
-        ); */
-      },
-      null,
-      null
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -183,7 +222,7 @@ export default function CargaPatentesSqlite() {
             <TextInput
               onChangeText={(patentetext) => setText(patentetext)}
               onSubmitEditing={() => {
-                add2(patentetext);
+                //add2(patentetext);
                 setText(null);
               }}
               autoCapitalize="characters"
@@ -192,12 +231,19 @@ export default function CargaPatentesSqlite() {
               style={styles.input}
               value={patentetext}
             />
-
+          </View>
+          <View  >
+            <Button
+              title="camara"
+              onPress={() => navigation.navigate("CameraScreen")}
+            >
+            </Button>
           </View>
 
-          <View style={styles.sectionContainer}>
-              <PatenteLista/>
-            
+
+
+          <View style={styles.listArea}>
+            <PatenteLista />
           </View>
 
 
@@ -215,17 +261,21 @@ export default function CargaPatentesSqlite() {
               title="listar"
               color="blue"
             />
-           
+
           </View>
 
           <View style={styles.botton}>
             <Button
-              onPress={() => add2(patentetext)}
+              onPress={() => {
+                // setText(null);
+                GetCurrentLocation();
+                add2(patentetext, location);
+
+              }}
               title="guardar"
               color="orange"
             />
           </View>
-
           <View style={styles.botton}>
             <Button
               onPress={(tx) => db.transaction(
@@ -244,12 +294,42 @@ export default function CargaPatentesSqlite() {
             <Button
               onPress={() => enviarDatos()}
               title="enviar"
-              color="orange"
+              color="red"
             />
           </View>
 
         </>
       )}
+    </View>
+  );
+}
+
+function PatenteLista({ }) {
+
+
+  const [patentes, setPatentes] = useState([]);
+
+  useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `select * from registro_patentes_diarios`,
+        [],
+        (_, { rows: { _array } }) => setPatentes(_array)
+      );
+    });
+  }, [patentes]);
+
+  if (patentes === null || patentes.length === 0) {
+    return null;
+  }
+  return (
+    <View style={styles.sectionContainer}>
+      <FlatList
+        data={patentes}
+        keyExtractor={({ id }, index) => id}
+        renderItem={({ item }) => (
+          <Text>id : {item.id}   patente: {item.patente}  hora:  {item.fecha}</Text>)}
+      />
     </View>
   );
 }
@@ -295,7 +375,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   listArea: {
-    backgroundColor: "#f0f0f0",
+    //  backgroundColor: "#f0f0f0",
     flex: 1,
     paddingTop: 16,
   },
@@ -308,3 +388,39 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
+
+
+/*   const ejemplo = () => {
+
+    const obleista = 2;
+
+    var patente = 'AAA000';
+
+    var date = moment()
+      .format('YYYY-MM-DD');
+
+    var hour = moment()
+      .utcOffset('+00:00')
+      .format('HH:mm');
+
+    fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "usuarioObleista": {
+          "id": 2
+        },
+        "patente": {
+          "numero": patente
+        },
+        "fecha": date,
+        "hora": hour
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+      });
+  } */
