@@ -13,7 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
-    "expo": "^50.0.0",
+    "expo": "^50.0.8",
     "expo-camera": "~14.0.3",
     "expo-location": "~16.5.2",
     "expo-permissions": "^13.2.0",
