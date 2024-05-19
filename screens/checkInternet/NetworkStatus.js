@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const NetworkStatus = () => {
     const [isConnected, setIsConnected] = useState(false);
-    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -17,7 +16,7 @@ const NetworkStatus = () => {
         };
     }, []);
 
-    const handleRetry = () => {
+    const handleButton = () => {
         if (isConnected) {
             ToastAndroid.show("Enviando...", 5);
         } else {
@@ -39,7 +38,7 @@ const NetworkStatus = () => {
                 </View>
             )}
             <View style={styles.toSend}>
-                <TouchableOpacity onPress={handleRetry} style={styles.button}>
+                <TouchableOpacity onPress={handleButton} style={styles.button}>
                     <Icon name="send" size={50} color="#fff" />
                 </TouchableOpacity>
             </View>
