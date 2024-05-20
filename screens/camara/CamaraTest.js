@@ -1,7 +1,7 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as FileSystem from 'expo-file-system';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
 
 const CamaraTest = () => {
 
@@ -28,8 +28,11 @@ const CamaraTest = () => {
             try {
                 const { uri } = await cameraRef.takePictureAsync();
                 console.log('Foto tomada:', uri);
-                // Aquí puedes hacer lo que quieras con la foto, como mostrarla en tu aplicación o guardarla en el dispositivo.
-
+                await FileSystem.copyAsync({
+                    from: uri,
+                    to: FileSystem.documentDirectory + 'Download/Seguros/photo.jpg',
+                });
+                console.log('Photo saved to:', FileSystem.documentDirectory + 'photo.jpg');
             } catch (error) {
                 console.error('Error al tomar la foto:', error);
             }
