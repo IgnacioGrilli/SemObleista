@@ -1,29 +1,81 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Camera } from 'react-native-vision-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 const CamaraTest = () => {
+
+    const [cameraRef, setCameraRef] = useState(null);
+    const [permission, requestPermission] = useCameraPermissions();
+
+    if (!permission) {
+        return <View />;
+    }
+
+    if (!permission.granted) {
+        return (
+            <View style={styles.container}>
+                <Text style={{ textAlign: 'center' }}>
+                    Otorgar permisos de cámara
+                </Text>
+                <Button onPress={requestPermission} title="Acceder" />
+            </View>
+        );
+    }
+
+    const takePicture = async () => {
+        if (cameraRef) {
+            try {
+                const { uri } = await cameraRef.takePictureAsync();
+                console.log('Foto tomada:', uri);
+                // Aquí puedes hacer lo que quieras con la foto, como mostrarla en tu aplicación o guardarla en el dispositivo.
+
+            } catch (error) {
+                console.error('Error al tomar la foto:', error);
+            }
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <Camera
-                style={StyleSheet.absoluteFill}
-                device={device}
-                isActive={true}
-            />
+            <CameraView
+                style={styles.camera}
+                ref={(ref) => setCameraRef(ref)}>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={takePicture}>
+                        <Text style={styles.text}>Shoot</Text>
+                    </TouchableOpacity>
+                </View>
+            </CameraView>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
     },
-    preview: {
+    camera: {
         flex: 1,
-        justifyContent: 'flex-end',
+    },
+    buttonContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        backgroundColor: 'transparent',
+        margin: 64,
+    },
+    button: {
+        flex: 1,
+        alignSelf: 'flex-end',
         alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 55,
+    },
+    text: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'black',
     },
 });
 

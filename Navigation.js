@@ -32,7 +32,7 @@ function MyStack() {
 
             <HomeStackNavigator.Screen
                 name="CameraScreen"
-                component={CameraScreen}
+                component={CamaraTest}
             />
 
         </HomeStackNavigator.Navigator>
