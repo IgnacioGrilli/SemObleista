@@ -1,20 +1,10 @@
-import { useState, useEffect } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button,
-  FlatList
-} from "react-native";
+import {useEffect, useState} from "react";
+import {Button, FlatList, Platform, StyleSheet, Text, TextInput, View} from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
 import * as Location from 'expo-location';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 //import Ubicacion from "../../screens/Geolocalizacion";
 //import CameraScrenn from "../../screens/cameraScrenn/CameraScrenn";
@@ -31,18 +21,15 @@ function openDatabase() {
     };
   }
 
-  const db = SQLite.openDatabase("db.db");
-  return db;
+  return SQLite.openDatabaseAsync("db.db");
 }
-
-const db = openDatabase();
-
 
 //const [location, setLocation] = useState(null);
 
 
 export default function CargaPatentesSqlite() {
 
+  const db = openDatabase();
   const navigation = useNavigation();
   const [patentetext, setText] = useState(null);
   const [location, setLocation] = useState(null);
@@ -98,7 +85,7 @@ export default function CargaPatentesSqlite() {
       } */
     }
 
-    console.log(" cooredenadas dentro del GetCurrent " + coords.latitude);
+    console.log(" coordenadas dentro del GetCurrent " + coords.latitude);
     return coords;
 
   };
@@ -180,7 +167,7 @@ export default function CargaPatentesSqlite() {
     }
 
     //validacion formato de patente
-    var reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/
+    const reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/;
 
     if (!reg.test(patentetext)) {
       return false;
