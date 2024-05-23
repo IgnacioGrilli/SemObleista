@@ -8,9 +8,8 @@ import HomeScreen from "./screens/HomeScreen";
 import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
-import Ubicacion from './screens/Geolocalizacion';
-//import CameraScrenn from './screens/cameraScrenn/CameraScrenn';
-import EnvioDatos from "./screens/EnvioDatos"
+import NetworkStatus from "./screens/checkInternet/NetworkStatus"
+import CamaraTest from "./screens/camara/CamaraTest";
 
 import CameraScreen from './components/cameraComponents/CameraScreen';
 
@@ -32,7 +31,7 @@ function MyStack() {
 
             <HomeStackNavigator.Screen
                 name="CameraScreen"
-                component={CameraScreen}
+                component={CamaraTest}
             />
 
         </HomeStackNavigator.Navigator>
@@ -90,7 +89,7 @@ function MyTabs() {
             />
 
             <Tab.Screen
-                name="cargaItem"
+                name="Carga de items"
                 component={CargaPatentesSqlite}
                 options={{
                     headerShown: false,
@@ -111,11 +110,11 @@ function MyTabs() {
             />
 
             <Tab.Screen
-                name="pagos diarios"
+                name="Camara"
                 component={PagosDiarios}
                 options={{
                     headerShown: false,
-                    title: 'pagos diarios',
+                    title: 'Cámara',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
@@ -123,7 +122,7 @@ function MyTabs() {
                     },
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons
-                            name="cash"
+                            name="camera"
                             color={color}
                             size={size}
                         />
@@ -131,8 +130,8 @@ function MyTabs() {
                 }}
             />
              <Tab.Screen
-                name=" camara"
-                component={EnvioDatos}
+                name="Enviar datos"
+                component={NetworkStatus}
                 options={{
                     headerShown: false,
                     title: 'Enviar Datos',
@@ -143,42 +142,14 @@ function MyTabs() {
                     },
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons
-                            name="cash"
+                            name="send"
                             color={color}
                             size={size}
                         />
                     )
                 }}
-            />  
-            
-
-          {/*   <Tab.Screen
-                name=" Ubicacion"
-                component={Ubicacion}
-                options={{
-                    headerShown: false,
-                    title: 'ubicacion',
-                    tabBarLabelStyle: {
-                        fontSize: 11,
-                        marginBottom: 8,
-                        marginTop: -8
-                    },
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons
-                            name="cash"
-                            color={color}
-                            size={size}
-                        />
-                    )
-                }}
-            /> */}
-
+            />
         </Tab.Navigator>
-
-
-
-
-
     )
 }
 

@@ -1,16 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button,
-  FlatList,
-  Alert
-} from "react-native";
+import {useEffect, useState} from "react";
+import {Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
@@ -29,13 +18,13 @@ function openDatabase() {
   return SQLite.openDatabaseAsync("db.db");
 }
 
-const db = openDatabase();
 const valorMinuto = 0.6;
 
 
 function PatenteLista({ onPressItem }) {
 
   const [patentes, setPatentes] = useState([]);
+  const db = openDatabase();
 
   // console.log("presiono: ");
   // console.log(JSON.stringify(onPressItem));

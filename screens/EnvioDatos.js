@@ -1,20 +1,7 @@
-import { useState, useEffect } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button,
-  FlatList,
-  Alert,
-  ActivityIndicator
-} from "react-native";
+import {useState, useEffect} from "react";
+import {ActivityIndicator, Button, Platform, StyleSheet, View} from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
-import moment from "moment";
 
 function openDatabase() {
   if (Platform.OS === "web") {
@@ -30,15 +17,16 @@ function openDatabase() {
   return SQLite.openDatabaseAsync("db.db");
 }
 
-const db = openDatabase();
-
 const idUsuarioObleista =2 ;
-
+let db = openDatabase();
 
 export default function EnvioDatos() {
 
   const [isLoading , setLoading] = useState(false);
 
+  useEffect(() => {
+     db = openDatabase();
+  });
 
   const enviarDatosPagos = () => {
 
