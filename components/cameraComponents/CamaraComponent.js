@@ -2,8 +2,10 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {MaterialIcons} from "@expo/vector-icons";
+import {camera} from "react-native-ico-material-design/src/data";
 
-const CamaraTest = () => {
+const CamaraComponent = () => {
 
     const [cameraRef, setCameraRef] = useState(null);
     const [permission, requestPermission] = useCameraPermissions();
@@ -30,7 +32,7 @@ const CamaraTest = () => {
                 console.log('Foto tomada:', uri);
                 await FileSystem.copyAsync({
                     from: uri,
-                    to: FileSystem.documentDirectory + 'Download/Seguros/photo.jpg',
+                    to: FileSystem.documentDirectory + 'photo.jpg',
                 });
                 console.log('Photo saved to:', FileSystem.documentDirectory + 'photo.jpg');
             } catch (error) {
@@ -46,7 +48,12 @@ const CamaraTest = () => {
                 ref={(ref) => setCameraRef(ref)}>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.button} onPress={takePicture}>
-                        <Text style={styles.text}>Shoot</Text>
+                        <MaterialIcons
+                            style={styles.icon}
+                            name="camera"
+                            color="#bbbbbb"
+                            size={60}
+                        />
                     </TouchableOpacity>
                 </View>
             </CameraView>
@@ -73,7 +80,9 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         alignItems: 'center',
         backgroundColor: 'white',
-        borderRadius: 55,
+        width: 60,
+        height: 60,
+        borderRadius: 70
     },
     text: {
         fontSize: 24,
@@ -82,4 +91,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CamaraTest;
+export default CamaraComponent;
