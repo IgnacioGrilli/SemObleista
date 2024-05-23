@@ -9,11 +9,7 @@ import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
 import NetworkStatus from "./screens/checkInternet/NetworkStatus"
-import CamaraTest from "./screens/camara/CamaraTest";
-
-import CameraScreen from './components/cameraComponents/CameraScreen';
-
-
+import CamaraComponent from "./components/cameraComponents/CamaraComponent";
 
 const HomeStackNavigator = createNativeStackNavigator();
 
@@ -27,11 +23,6 @@ function MyStack() {
             <HomeStackNavigator.Screen
                 name="Inicio"
                 component={HomeScreen}
-            />
-
-            <HomeStackNavigator.Screen
-                name="CameraScreen"
-                component={CamaraTest}
             />
 
         </HomeStackNavigator.Navigator>
@@ -69,7 +60,7 @@ function MyTabs() {
                 }}
             />
             <Tab.Screen
-                name="Carga de patentes"
+                name="Patentes"
                 component={CargaPatentesScreen}
                 options={{
                     headerShown: false,
@@ -89,11 +80,10 @@ function MyTabs() {
             />
 
             <Tab.Screen
-                name="Carga de items"
+                name="Items"
                 component={CargaPatentesSqlite}
                 options={{
                     headerShown: false,
-                    title: 'items',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
@@ -110,11 +100,10 @@ function MyTabs() {
             />
 
             <Tab.Screen
-                name="Camara"
-                component={PagosDiarios}
+                name="Cámara"
+                component={CamaraComponent}
                 options={{
                     headerShown: false,
-                    title: 'Cámara',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,

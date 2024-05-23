@@ -8,15 +8,10 @@ const HomeScreen = () => {
 
     return(
 
-        <View style={styles.title}>
+        <View style={styles.titleContainer}>
             <Text style={styles.title}>
-                Bienvenido al SEM obleista!
+                !Bienvenido!
             </Text>
-            <Button
-                title="camara"
-                onPress={() => navigation.navigate("CameraScreen")}
-            >
-            </Button>
         </View>
     
     );
@@ -24,10 +19,12 @@ const HomeScreen = () => {
 }
 
 const styles = StyleSheet.create({
-
+    titleContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     title: {
         fontSize: 30,
-        color: '#000',
         padding: 12,
         marginTop: 20,
         alignItems: 'center',
