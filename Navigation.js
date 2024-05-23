@@ -12,7 +12,6 @@ import Ubicacion from './screens/Geolocalizacion';
 //import CameraScrenn from './screens/cameraScrenn/CameraScrenn';
 import EnvioDatos from "./screens/EnvioDatos"
 
-
 import CameraScreen from './components/cameraComponents/CameraScreen';
 
 

@@ -31,8 +31,8 @@ function openDatabase() {
     };
   }
 
-  const db = SQLite.openDatabase("db.db");
-  return db;
+  return SQLite.openDatabaseAsync("db.db");
+
 }
 
 const db = openDatabase();

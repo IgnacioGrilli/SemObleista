@@ -1,6 +1,6 @@
 import { Camera, CameraType } from 'expo-camera';
 import React, { useState, useEffect } from 'react';
-import { BUtton, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const CameraScreen = () => {
