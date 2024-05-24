@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
 import Constants from "expo-constants";
-
 import * as Location from 'expo-location';
-
 
 export default function Ubicacion() {
 
