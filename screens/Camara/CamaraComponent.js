@@ -3,7 +3,6 @@ import * as FileSystem from 'expo-file-system';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
-import {camera} from "react-native-ico-material-design/src/data";
 
 const CamaraComponent = () => {
 
