@@ -2,14 +2,18 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from "@react-navigation/native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { Ionicons } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import HomeScreen from "./screens/HomeScreen";
-import CargaPatentesScreen from "./screens/CargaPatentesScreen";
 import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
 import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
+
+
 import NetworkStatus from "./screens/checkInternet/NetworkStatus"
 import CamaraComponent from "./components/cameraComponents/CamaraComponent";
+
 
 const HomeStackNavigator = createNativeStackNavigator();
 
@@ -44,24 +48,19 @@ function MyTabs() {
                 component={MyStack}
                 options={{
                     headerShown: false,
-                    title: 'Inicio',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
                         marginTop: -8
                     },
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons
-                            name="home"
-                            color={color}
-                            size={size}
-                        />
+                    tabBarIcon: () => (
+                        <AntDesign name="home" size={28} color="black" />
                     )
                 }}
             />
             <Tab.Screen
-                name="Patentes"
-                component={CargaPatentesScreen}
+                name="Pagos"
+                component={PagosDiarios}
                 options={{
                     headerShown: false,
                     tabBarLabelStyle: {
@@ -69,32 +68,25 @@ function MyTabs() {
                         marginBottom: 8,
                         marginTop: -8
                     },
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons
-                            name="car"
-                            color={color}
-                            size={size}
-                        />
+                    tabBarIcon: () => (
+                        <FontAwesome5 name="car" size={24} color="black" />
                     )
                 }}
             />
 
             <Tab.Screen
-                name="Items"
+                name="cargaItem"
                 component={CargaPatentesSqlite}
                 options={{
                     headerShown: false,
+                    title: 'Registro',
                     tabBarLabelStyle: {
                         fontSize: 11,
                         marginBottom: 8,
                         marginTop: -8
                     },
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons
-                            name="playlist-edit"
-                            color={color}
-                            size={size}
-                        />
+                    tabBarIcon: () => (
+                        <Feather name="user-check" size={24} color="black" />
                     )
                 }}
             />
@@ -109,12 +101,8 @@ function MyTabs() {
                         marginBottom: 8,
                         marginTop: -8
                     },
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons
-                            name="camera"
-                            color={color}
-                            size={size}
-                        />
+                    tabBarIcon: () => (
+                        <FontAwesome5 name="camera" size={24} color="black" />
                     )
                 }}
             />
@@ -129,12 +117,8 @@ function MyTabs() {
                         marginBottom: 8,
                         marginTop: -8
                     },
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons
-                            name="send"
-                            color={color}
-                            size={size}
-                        />
+                    tabBarIcon: () => (
+                        <Ionicons name="cloud-upload-outline" size={24} color="black" />
                     )
                 }}
             />

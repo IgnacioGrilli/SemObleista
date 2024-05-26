@@ -1,20 +1,7 @@
-import { useState, useEffect } from "react";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Button,
-  FlatList,
-  Alert,
-  ActivityIndicator
-} from "react-native";
+import {useState} from "react";
+import {ActivityIndicator, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
-import moment from "moment";
 
 async function openDatabase() {
   if (Platform.OS === "web") {
@@ -26,27 +13,38 @@ async function openDatabase() {
     };
   }
 
-  const db = await SQLite.openDatabaseAsync("db.db");
-  return db;
+  return await SQLite.openDatabaseAsync("db.db");
 }
 
 const idUsuarioObleista = 2;
 
 export default function EnvioDatos() {
   const [isLoading, setLoading] = useState(false);
+  const [pagos, setPagos] = useState([]);
+  const [registros, setRegistros] = useState([]);
+  const [mostrarPagos, setMostrarPagos] = useState(false);
+  const [mostrarRegistros, setMostrarRegistros] = useState(false);
 
   const enviarDatosPagos = async () => {
-    setLoading(true);
+    //setLoading(true);
     const db = await openDatabase();
-    const { rows } = await db.getAllAsync('SELECT * FROM registro_pagos_diarios');
+    const  rows  = await db.getAllAsync('SELECT * FROM registro_pagos_diarios');
+    console.log('data pagos', rows);
     await enviarDataPagos(rows);
-    setLoading(false);
+    // setLoading(false);
+  };
+
+  const eliminarDatos = async () => {
+    const db = await openDatabase();
+    await db.runAsync('DELETE FROM registro_pagos_diarios');
+    await db.runAsync('DELETE FROM registro_patentes_diarios');
+    console.log('Datos eliminados');
   };
 
   const enviarDataPagos = async (listaPatPagos) => {
     const len = listaPatPagos.length;
     for (let i = 0; i < len; i++) {
-      const item = listaPatPagos.item(i);
+      const item = listaPatPagos[i];
       const patente = item.patente;
       const date = item.fecha.split(' ')[0];
       const horaInicioPago = item.fecha.split(' ')[1];
@@ -81,17 +79,22 @@ export default function EnvioDatos() {
   };
 
   const enviarDatosRegistros = async () => {
-    setLoading(true);
+    // setLoading(true);
+
     const db = await openDatabase();
-    const { rows } = await db.getAllAsync('SELECT * FROM registro_patentes_diarios');
-    await enviarData(rows);
-    setLoading(false);
+
+    const result = await db.getAllAsync('SELECT * FROM registro_patentes_diarios');
+    //console.log('data',result);
+    // const rows = result.rows._array || result.rows; // Asegúrate de tener los datos en formato de array
+    //  console.log('data',rows);
+    await enviarData(result);
+    //  setLoading(false);
   };
 
   const enviarData = async (listaPat) => {
     const len = listaPat.length;
     for (let i = 0; i < len; i++) {
-      const item = listaPat.item(i);
+      const item = listaPat[i]; // Accede directamente como un array
       const patente = item.patente;
       const date = item.fecha.split(' ')[0];
       const hour = item.fecha.split(' ')[1];
@@ -125,107 +128,140 @@ export default function EnvioDatos() {
     }
   };
 
-  const eliminarDAtos = async () => {
+  const listarPagos = async () => {
+    setMostrarPagos(true);
+    setMostrarRegistros(false);
     const db = await openDatabase();
-    await db.runAsync('DELETE FROM registro_pagos_diarios');
-    await db.runAsync('DELETE FROM registro_patentes_diarios');
-    console.log('Datos eliminados');
+    const allRows = await db.getAllAsync("SELECT * FROM registro_pagos_diarios");
+    setPagos(allRows);
   };
 
-  return (
-      <View style={styles.container}>
-        {!isLoading ? (
-            <Button
-                onPress={async () => {
-                  setLoading(true);
-                  await enviarDatosRegistros();
-                  await enviarDatosPagos();
-                  await eliminarDAtos();
-                  setLoading(false);
-                }}
-                title="Enviar Datos"
-                color="orange"
-            />
-        ) : (
-            <ActivityIndicator animating={true} />
+  const listarRegistros = async () => {
+    setMostrarRegistros(true);
+    setMostrarPagos(false);
+    const db = await openDatabase();
+    const allRows = await db.getAllAsync('SELECT * FROM registro_patentes_diarios');
+    setRegistros(allRows);
+  };
+
+  return (<ScrollView style={styles.container} stickyHeaderIndices={[0]} >
+        <View style={styles.header}>
+          <Text style={styles.title}>Gestión de Patentes</Text>
+          {!isLoading ? (
+              <TouchableOpacity
+                  style={[styles.button, styles.sendButton]}
+                  onPress={async () => {
+                    //  setLoading(true);
+                    await enviarDatosRegistros();
+                    await enviarDatosPagos();
+                    await eliminarDatos();
+                    //  setLoading(false);
+                  }}
+              >
+                <Text style={styles.buttonText}>Enviar Datos</Text>
+              </TouchableOpacity>
+          ) : (
+              <ActivityIndicator animating={true} size="large" color="#0000ff" />
+          )}
+
+          <TouchableOpacity
+              style={[styles.button, styles.listButton]}
+              onPress={listarPagos}
+          >
+            <Text style={styles.buttonText}>Listar Pagos</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+              style={[styles.button, styles.listButton]}
+              onPress={listarRegistros}
+          >
+            <Text style={styles.buttonText}>Listar Registros</Text>
+          </TouchableOpacity>
+        </View>
+
+
+        {mostrarPagos && pagos.length > 0 && (
+            <View style={styles.listArea}>
+              <Text style={styles.sectionHeading}>Pagos:</Text>
+              {pagos.map((row, index) => (
+                  <View key={index} style={styles.listItem}>
+                    <Text style={styles.listText}>{row.patente} - {row.fecha}</Text>
+                  </View>
+              ))}
+            </View>
         )}
 
-        <Button
-            onPress={async () => {
-              const db = await openDatabase();
-              const { rows } = await db.getAllAsync('SELECT * FROM registro_pagos_diarios');
-              console.log(JSON.stringify(rows));
-            }}
-            title="listar Pagos"
-            color="blue"
-        />
+        {mostrarRegistros && registros.length > 0 && (
+            <View style={styles.listArea}>
+              <Text style={styles.sectionHeading}>Registros:</Text>
+              {registros.map((row, index) => (
+                  <View key={index} style={styles.listItem}>
+                    <Text style={styles.listText}>{row.patente} - {row.fecha}</Text>
+                  </View>
+              ))}
+            </View>
+        )}
+      </ScrollView>
 
-        <Button
-            onPress={async () => {
-              const db = await openDatabase();
-              const { rows } = await db.getAllAsync('SELECT * FROM registro_patentes_diarios');
-              console.log(JSON.stringify(rows));
-            }}
-            title="listar Registros"
-            color="blue"
-        />
-      </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f0f0f0",
     flex: 1,
     paddingTop: Constants.statusBarHeight,
+    paddingHorizontal: 16,
   },
-  heading: {
+  header: {
+    backgroundColor: "#0288d1",
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  title: {
     fontSize: 20,
     fontWeight: "bold",
-    textAlign: "center",
+    color: "#fff",
   },
-  botton: {
-    borderColor: "#4630eb",
-    borderRadius: 10,
-    borderWidth: 2,
-    borderBottomWidth: 5,
-    fontSize: 8,
-    fontWeight: "bold",
-    textAlign: "center",
-    height: 50,
-    margin: 5,
-    padding: 4
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  flexRow: {
-    flexDirection: "row",
-    margin: 5,
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
-  flexRowButon: {
-    flexDirection: "row",
-    margin: 5,
-    padding: 4,
-    height: 50,
-    fontSize: 8,
+  sendButton: {
+    backgroundColor: "#4caf50",
+    marginRight: 8,
   },
-  input: {
-    borderColor: "#4630eb",
-    borderRadius: 4,
-    borderWidth: 1,
-    flex: 1,
-    height: 48,
-    margin: 16,
-    padding: 8,
+  listButton: {
+    backgroundColor: "#1976d4",
+    marginRight: 8,
   },
   listArea: {
-    flex: 1,
-    paddingTop: 16,
-  },
-  sectionContainer: {
-    marginBottom: 16,
-    marginHorizontal: 16,
+    backgroundColor: "#fff",
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 8,
   },
   sectionHeading: {
     fontSize: 18,
+    fontWeight: "bold",
     marginBottom: 8,
+  },
+  listItem: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  listText: {
+    fontSize: 16,
   },
 });
