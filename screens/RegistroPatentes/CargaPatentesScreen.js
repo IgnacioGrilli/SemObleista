@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, Button, SafeAreaView, TextInput, TouchableOpacity } from 'react-native';
-import CargaPatentes from '../components/cargaPatentesComponents/CargaPatentes';
+import CargaPatentes from '../../components/cargaPatentes/CargaPatentes';
 
 
 const CargaPatentesScreen = () => {

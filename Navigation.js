@@ -6,13 +6,13 @@ import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-import HomeScreen from "./screens/HomeScreen";
-import CargaPatentesSqlite from './components/cargaPatentesComponents/CargaPatenteSqlite';
-import PagosDiarios from './components/cargaPatentesComponents/PagosDiarios';
+import HomeScreen from "./screens/Inicio/HomeScreen";
+import CargaPatentesSqlite from './components/cargaPatentes/CargaPatenteSqlite';
+import PagosDiarios from './screens/PagosDiarios/PagosDiarios';
 
 
-import NetworkStatus from "./screens/checkInternet/NetworkStatus"
-import CamaraComponent from "./components/cameraComponents/CamaraComponent";
+import NetworkStatus from "./screens/EnviarDatos/NetworkStatus"
+import CamaraComponent from "./screens/Camara/CamaraComponent";
 
 
 const HomeStackNavigator = createNativeStackNavigator();
