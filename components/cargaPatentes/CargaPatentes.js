@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState} from 'react';
 import moment from 'moment';
 import Geolocation from 'react-native-geolocation-service';
 import {
@@ -8,27 +7,21 @@ import {
     StyleSheet,
     Button,
     SafeAreaView,
-    TextInput
+    TextInput, PermissionsAndroid
 } from 'react-native';
 
 const CargaPatentes = () => {
 
     moment().format();
 
-    const navigation = useNavigation();
-
     const [patente, setPatente] = useState("");
 
-    const postRegistroOnPress = () => {
+    let date = moment()
+        .format('YYYY-MM-DD');
 
-        var obleista = '2';
-
-        var date = moment()
-            .format('YYYY-MM-DD');
-
-        var hour = moment()
-            .utcOffset('+00:00')
-            .format('HH:mm');
+    let hour = moment()
+        .utcOffset('+00:00')
+        .format('HH:mm');
 
         fetch('http://if012app.fi.mdn.unp.edu.ar:28001/registroPatentes/new', {
             method: 'POST',
@@ -50,7 +43,6 @@ const CargaPatentes = () => {
             .then((data) => {
                 console.log('Success:', data);
             });
-    }
 
     const validateNumero = (patente) => {
         const reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/;
@@ -114,10 +106,6 @@ const CargaPatentes = () => {
         });
         console.log(location);
     };
-    function error(err) {
-        console.warn(`ERROR(${err.code}): ${err.message}`);
-    }
-
 
     return(
         <SafeAreaView>
@@ -142,8 +130,7 @@ const CargaPatentes = () => {
                 </SafeAreaView>
             </View>
         </SafeAreaView>
-    );
-
+    )
 }
 
 const styles = StyleSheet.create({
@@ -183,8 +170,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
-    }
-
+    },
 });
 
 export default CargaPatentes;
