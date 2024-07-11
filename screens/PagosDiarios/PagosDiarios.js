@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground } from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
 import moment from "moment";
@@ -7,15 +7,16 @@ import moment from "moment";
 async function openDatabase() {
   if (Platform.OS === "web") {
     return {
-      execAsync: () => {},
-      runAsync: () => {},
-      getFirstAsync: () => {},
-      getAllAsync: () => {},
+      execAsync: () => { },
+      runAsync: () => { },
+      getFirstAsync: () => { },
+      getAllAsync: () => { },
     };
   }
 
   return await SQLite.openDatabaseAsync("db.db");
 }
+
 const valorMinuto = 0.6;
 
 function PatenteLista({ onPressItem }) {
@@ -35,13 +36,12 @@ function PatenteLista({ onPressItem }) {
   }
 
   return (
-
       <View style={styles.listArea}>
         <Text style={styles.heading}>PAGOS</Text>
         {patentes.map(({ id, patente, valor, fecha, fechaFin }) => (
             <View key={id} style={styles.listItem}>
               <View style={styles.textContainer}>
-                <Text style={styles.listText}>{patente} monto: ${valor} hrInicio: {fecha.split(' ')[1]} hrFIN: {fechaFin.split(' ')[1]}</Text>
+                <Text style={styles.listText}>Patente: {patente} - Monto: ${valor} - Hora Inicio: {fecha.split(' ')[1]} - Hora Fin: {fechaFin.split(' ')[1]}</Text>
               </View>
               <TouchableOpacity onPress={() => onPressItem(id)}>
                 <Text style={styles.deleteIcon}>❌</Text>
@@ -51,10 +51,10 @@ function PatenteLista({ onPressItem }) {
       </View>
   );
 }
+
 export default function PagosDiarios() {
-  const [patenteText, setText] = useState(null);
+  const [patenteText, setPatenteText] = useState("");
   const [valor, setValor] = useState(0);
-  // const [forceUpdate, forceUpdateId] = useForceUpdate();
 
   useEffect(() => {
     async function setupDatabase() {
@@ -68,158 +68,143 @@ export default function PagosDiarios() {
           fechaFin TEXT
         );
       `);
-      console.log("tabla creada!");
+      console.log("Tabla creada!");
     }
     setupDatabase();
   }, []);
 
   const add2 = async (patenteText, valor) => {
-
-    // is patenteText empty?
-    if (patenteText === null || patenteText === "") {
-      return Alert.alert(
-          "Complete el campo de patente",
-          "Campo de patente incompleto",
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ]
+    // Validar campos
+    if (!patenteText || !valor) {
+      Alert.alert(
+          "Campos Incompletos",
+          "Complete los campos de Patente y Valor.",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }]
       );
+      return;
     }
 
-    if (valor === null || valor === "") {
-      return Alert.alert(
-          "Complete el campo de valor",
-          "Campo de valor incompleto",
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ]
-      );
-    }
-
-    //validacion formato de patente
+    // Validación formato de patente
     const reg = /([A-Z]{3}[0-9]{3})|([A-Z]{2}[0-9]{3}[A-Z]{2})/;
-
     if (!reg.test(patenteText)) {
-      return Alert.alert(
-          "Error",
-          "Formato de patente incorrecto (ej : AA123BB o ABC123)",
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ]
+      Alert.alert(
+          "Formato Incorrecto",
+          "Formato de patente incorrecto (ej: AA123BB o ABC123).",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }]
       );
+      return;
     }
 
-    let date = moment().format('YYYY-MM-DD HH:mm');
-    console.log(JSON.stringify(patenteText));
-    console.log(JSON.stringify(valor));
-    console.log(JSON.stringify(date));
-
-    let sumaMinutos = (valor * valorMinuto);
-
-    console.log(sumaMinutos);
-
-    let dateFIN = moment().add(sumaMinutos,'m');
-    let dateFinaux = dateFIN.format('YYYY-MM-DD HH:mm');
-
-    console.log(dateFIN.format('YYYY-MM-DD HH:mm'));
+    const date = moment().format('YYYY-MM-DD HH:mm');
+    const sumaMinutos = valor * valorMinuto;
+    const dateFIN = moment().add(sumaMinutos, 'm');
+    const dateFinaux = dateFIN.format('YYYY-MM-DD HH:mm');
 
     const db = await openDatabase();
     await db.runAsync("INSERT INTO registro_pagos_diarios (patente, fecha, valor, fechaFin) VALUES (?, ?, ?, ?)", [patenteText, date, valor, dateFinaux]);
     console.log(`Patente ${patenteText} registrada con valor ${valor}`);
+
+    // Limpiar los campos después de guardar
+    setPatenteText("");
+    setValor(0);
   };
 
   return (
-      <View style={styles.container}>
-        <Text style={styles.heading}>Registro de Pagos Diario</Text>
+      <ImageBackground
+          source={require('../../assets/background.jpg')}
+          style={styles.background}
+          resizeMode="cover"
+      >
+        <View style={styles.container}>
+          <Text style={styles.heading}>Registro de Pagos Diario</Text>
 
-        {Platform.OS === 'web' ? (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={styles.heading}>Expo SQLite is not supported on web!</Text>
-            </View>
-        ) : (
-            <>
-              <View style={styles.flexRow}>
-                <TextInput
-                    onChangeText={(patenteText) => setText(patenteText)}
-                    onSubmitEditing={() => {
-                      setText(null);
-                    }}
-                    autoCapitalize="characters"
-                    maxLength={7}
-                    placeholder="Ingrese la patente que desea registrar"
-                    style={styles.input}
-                    value={patenteText}
-                />
-                <TextInput
-                    onChangeText={(valor) => setValor(valor)}
-                    onSubmitEditing={() => {
-                      setValor(null);
-                    }}
-                    autoCapitalize="characters"
-                    maxLength={7}
-                    placeholder="Ingrese el monto a pagar"
-                    style={styles.input}
-                    value={valor}
-                    keyboardType="decimal-pad"
-                />
+          {Platform.OS === 'web' ? (
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={styles.heading}>Expo SQLite is not supported on web!</Text>
               </View>
+          ) : (
+              <>
+                <View style={styles.flexRow}>
+                  <TextInput
+                      onChangeText={(text) => setPatenteText(text)}
+                      value={patenteText}
+                      autoCapitalize="characters"
+                      maxLength={7}
+                      placeholder="Patente"
+                      placeholderTextColor="white"  // Ajusta el color del texto del placeholder
+                      style={styles.input}
 
-              <View style={styles.fixedButtonContainer}>
-                <Button title="50$" onPress={() => { setValor(50); }} />
-                <Button title="100$" onPress={() => { setValor(100); }} />
-                <Button title="500$" onPress={() => { setValor(500); }} />
-              </View>
 
-              <ScrollView style={styles.listArea}>
-                <PatenteLista
-                    onPressItem={(id) =>
-                        Alert.alert(
-                            "Alert",
-                            "Borrar Registro ??",
-                            [
-                              { text: "Cancel", onPress: () => console.log("Cancel Pressed"), style: "cancel" },
-                              {
-                                text: "OK", onPress: async () => {
-                                  const db = await openDatabase();
-                                  await db.runAsync("DELETE FROM registro_pagos_diarios WHERE id = ?", [id]);
-                                  console.log(`Registro con id ${id} borrado`);
+                  />
+                  <TextInput
+                      onChangeText={(text) => setValor(parseFloat(text))}
+                      value={valor.toString()}
+                      maxLength={7}
+                      placeholder="Ingrese el monto a pagar"
+                      style={styles.input}
+                      keyboardType="decimal-pad"
+                  />
+                </View>
+
+                <View style={styles.fixedButtonContainer}>
+                  <Button title="$50" onPress={() => setValor(50)} />
+                  <Button title="$100" onPress={() => setValor(100)} />
+                  <Button title="$500" onPress={() => setValor(500)} />
+                </View>
+
+                <ScrollView style={styles.listArea}>
+                  <PatenteLista
+                      onPressItem={(id) =>
+                          Alert.alert(
+                              "Confirmación",
+                              "¿Está seguro que desea eliminar este registro?",
+                              [
+                                { text: "Cancelar", onPress: () => console.log("Cancel Pressed"), style: "cancel" },
+                                {
+                                  text: "Eliminar", onPress: async () => {
+                                    const db = await openDatabase();
+                                    await db.runAsync("DELETE FROM registro_pagos_diarios WHERE id = ?", [id]);
+                                    console.log(`Registro con id ${id} eliminado`);
+                                  }
                                 }
-                              }
-                            ]
-                        )
-                    }
-                />
-              </ScrollView>
+                              ]
+                          )
+                      }
+                  />
+                </ScrollView>
 
-              <View style={styles.fixedButtonContainer}>
-                <Button
-                    onPress={() => {
-                      add2(patenteText, valor).then(() =>
-                      console.log("Add2 press"));
-                      setText(null);
-                      setValor(null);
-                    }}
-                    title="Guardar"
-                    color="orange"
-                />
-              </View>
-            </>
-        )}
-      </View>
+                <View style={styles.fixedButtonContainer}>
+                  <Button
+                      onPress={() => add2(patenteText, valor)}
+                      title="Guardar"
+                      color="orange"
+                  />
+                </View>
+              </>
+          )}
+        </View>
+      </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    // backgroundColor: 'rgba(255, 255, 255, 0.5)', // Fondo semitransparente
     padding: 16,
     marginTop: Constants.statusBarHeight,
+  },
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'contain',
   },
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
+    textAlign: 'center',
+    color: 'white', // Color del texto del encabezado
   },
   flexRow: {
     flexDirection: 'row',
@@ -227,19 +212,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
+    borderColor: "#fff", // Color del borde del input
+    borderRadius: 9,
+    borderWidth: 3,
     flex: 1,
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    height: 48,
+    marginEnd: 16,
     paddingHorizontal: 8,
-    marginRight: 8,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 16,
+    color: "white", // Color del texto del input
   },
   listArea: {
+    flex: 1,
     padding: 16,
   },
   sectionContainer: {
@@ -252,27 +235,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-between',
   },
-  botton: {
-    borderColor: "#4630eb",
-    borderRadius: 10,
-    borderWidth: 2,
-    borderBottomWidth: 5,
-    fontSize: 8,
-    fontWeight: "bold",
-    textAlign: "center",
-    height: 50,
-    margin: 5,
-    padding: 4
-  },
-
-  flexRowButon: {
-    flexDirection: "row",
-    margin: 5,
-    padding: 4,
-    height: 50,
-    fontSize: 8,
-  },
-
   sectionHeading: {
     fontSize: 18,
     fontWeight: "bold",
@@ -295,18 +257,9 @@ const styles = StyleSheet.create({
   listText: {
     fontSize: 14,
   },
-  deleteButton: {
-    backgroundColor: "#e74c3c",
-    padding: 8,
-    borderRadius: 4,
-  },
   deleteIcon: {
     fontSize: 18,
     color: '#ff0000',
-  },
-  deleteButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
   fixedButtonContainer: {
     flexDirection: 'row',

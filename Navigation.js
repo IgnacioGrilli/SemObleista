@@ -9,7 +9,9 @@ import { AntDesign } from '@expo/vector-icons';
 import HomeScreen from "./screens/Inicio/HomeScreen";
 import CargaPatentesSqlite from './components/cargaPatentes/CargaPatenteSqlite';
 import PagosDiarios from './screens/PagosDiarios/PagosDiarios';
-
+import EnvioDatos from './screens/EnviarDatos/EnvioDatos';
+import InfraccionesScreen from './screens/Infractores/InfraccionesScreen';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import NetworkStatus from "./screens/EnviarDatos/NetworkStatus"
 import CamaraComponent from "./screens/Camara/CamaraComponent";
@@ -106,9 +108,9 @@ function MyTabs() {
                     )
                 }}
             />
-             <Tab.Screen
+            <Tab.Screen
                 name="Enviar datos"
-                component={NetworkStatus}
+                component={EnvioDatos}
                 options={{
                     headerShown: false,
                     title: 'Enviar Datos',
@@ -119,6 +121,22 @@ function MyTabs() {
                     },
                     tabBarIcon: () => (
                         <Ionicons name="cloud-upload-outline" size={24} color="black" />
+                    )
+                }}
+            />
+            <Tab.Screen
+                name="Infractores"
+                component={InfraccionesScreen}
+                options={{
+                    headerShown: false,
+                    title: 'infractores',
+                    tabBarLabelStyle: {
+                        fontSize: 11,
+                        marginBottom: 8,
+                        marginTop: -8
+                    },
+                    tabBarIcon: () => (
+                        <MaterialIcons name="taxi-alert" size={24} color="black" />
                     )
                 }}
             />
