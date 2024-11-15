@@ -6,7 +6,7 @@ import axios from "axios";
 
 const CamaraComponent = () => {
 
-    const GOOGLE_API_KEY = "AIzaSyA6va2okbZSmx9MmsuF1EPGz4CV9XQsfzw";
+    const GOOGLE_API_KEY = "*****GOOGLE_API_KEY*****";
     const [uri, setUri] = useState("");
     const [text, setText] = useState("");
     const [cameraRef, setCameraRef] = useState(null);
